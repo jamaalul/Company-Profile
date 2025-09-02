@@ -41,6 +41,18 @@
                             <span class="font-medium text-gray-900">{{ $order->bidang }}</span>
                         </div>
                         <div class="flex justify-between">
+                            <span class="text-gray-600">Size:</span>
+                            <span class="font-medium text-gray-900">{{ $order->size }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Jumlah:</span>
+                            <span class="font-medium text-gray-900">1 item</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Metode Pembayaran:</span>
+                            <span class="font-medium text-gray-900">{{ strtoupper($order->payment_method) }}</span>
+                        </div>
+                        <div class="flex justify-between">
                             <span class="text-gray-600">Total Pembayaran:</span>
                             <span class="font-bold text-blue-800 text-lg">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
                         </div>
@@ -78,7 +90,7 @@
                        class="px-6 py-3 border border-blue-800 text-blue-800 font-medium rounded-lg hover:bg-blue-50 transition duration-200">
                         Belanja Lagi
                     </a>
-                    <a href="https://wa.me/6281234567890?text=Halo, saya ingin menanyakan status pesanan {{ $order->order_number }}" 
+                    <a href="https://wa.me/6285229268809" 
                        target="_blank"
                        class="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition duration-200 flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">

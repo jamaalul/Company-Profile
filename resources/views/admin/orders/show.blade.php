@@ -79,15 +79,12 @@
                 @foreach($order->items as $item)
                 <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                     <img src="{{ $item->product->featured_image ? asset('storage/' . $item->product->featured_image) : '/placeholder.svg?height=80&width=80' }}" 
-                         alt="{{ $item->product->name }}"
-                         class="w-16 h-16 object-cover rounded-lg">
+                        alt="{{ $item->product->name }}"
+                        class="w-16 h-16 object-cover rounded-lg">
                     <div class="flex-1">
                         <h4 class="font-medium text-gray-900">{{ $item->product->name }}</h4>
                         <p class="text-sm text-gray-600">Size: {{ $order->size }}</p>
-                        <p class="text-sm text-gray-600">Jumlah: {{ $item->quantity }}</p>
-                        @if($order->no_bundling)
-                            <p class="text-sm text-gray-600">No. Bundling: {{ $order->no_bundling }}</p>
-                        @endif
+                        <p class="text-sm text-gray-600">Jumlah: 1 item</p>
                     </div>
                     <div class="text-right">
                         <p class="font-medium text-gray-900">Rp {{ number_format($item->price, 0, ',', '.') }}</p>
@@ -219,7 +216,7 @@
                         </form>
                     @endif
                     
-                    <a href="https://wa.me/{{ str_replace(['+', '-', ' '], '', $order->customer_phone) }}?text=Halo {{ $order->customer_name }}, terima kasih telah berbelanja di HIMTI Store. Pesanan Anda dengan nomor {{ $order->order_number }} sedang kami proses." 
+                    <a href="https://wa.me/{{ preg_replace('/^0/', '62', str_replace(['+', '-', ' '], '', $order->customer_phone)) }}?text=Halo {{ $order->customer_name }}, terima kasih telah berbelanja di HIMTI Store. Pesanan Anda dengan nomor {{ $order->order_number }} sedang kami proses."
                        target="_blank"
                        class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-200 flex items-center justify-center">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">

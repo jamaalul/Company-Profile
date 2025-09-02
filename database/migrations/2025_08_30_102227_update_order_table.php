@@ -10,10 +10,9 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->string('angkatan')->after('customer_address');
-            $table->enum('bidang', ['HIMTI (non hima)', 'Per Departement', 'Alumni'])->after('angkatan');
+            $table->enum('bidang', ['HIMTI (non hima)', 'Alumni', 'Medinfo', 'Pendidikan', 'Pengmas', 'Perhubungan', 'PSDM', 'Ekraf'])->after('angkatan');
             $table->enum('size', ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'])->after('bidang');
-            $table->string('no_bundling')->nullable()->after('size');
-            $table->enum('payment_method', ['cash', 'qris'])->after('no_bundling');
+            $table->enum('payment_method', ['cash', 'qris'])->after('size');
             $table->string('payment_proof')->nullable()->after('payment_method');
             $table->text('admin_notes')->nullable()->after('status');
             
@@ -26,11 +25,9 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropColumn([
-                'order_number',
                 'angkatan', 
                 'bidang',
                 'size',
-                'no_bundling',
                 'payment_method',
                 'payment_proof',
                 'admin_notes'

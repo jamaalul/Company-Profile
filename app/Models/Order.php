@@ -18,7 +18,6 @@ class Order extends Model
         'angkatan',
         'bidang',
         'size',
-        'no_bundling',
         'payment_method',
         'payment_proof',
         'total_amount',

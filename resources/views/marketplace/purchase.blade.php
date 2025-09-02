@@ -89,8 +89,13 @@
                                     required>
                                 <option value="">Pilih Bidang</option>
                                 <option value="HIMTI (non hima)" {{ old('bidang') == 'HIMTI (non hima)' ? 'selected' : '' }}>HIMTI (non hima)</option>
-                                <option value="Per Departement" {{ old('bidang') == 'Per Departement' ? 'selected' : '' }}>Per Departement</option>
                                 <option value="Alumni" {{ old('bidang') == 'Alumni' ? 'selected' : '' }}>Alumni</option>
+                                <option value="Medinfo" {{ old('bidang') == 'Medinfo' ? 'selected' : '' }}>Medinfo</option>
+                                <option value="Pendidikan" {{ old('bidang') == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
+                                <option value="Pengmas" {{ old('bidang') == 'Pengmas' ? 'selected' : '' }}>Pengmas</option>
+                                <option value="Perhubungan" {{ old('bidang') == 'Perhubungan' ? 'selected' : '' }}>Perhubungan</option>
+                                <option value="PSDM" {{ old('bidang') == 'PSDM' ? 'selected' : '' }}>PSDM</option>
+                                <option value="Ekraf" {{ old('bidang') == 'Ekraf' ? 'selected' : '' }}>Ekraf</option>
                             </select>
                         </div>
 
@@ -122,54 +127,24 @@
                                   required>{{ old('customer_address') }}</textarea>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Size -->
-                        <div>
-                            <label for="size" class="block text-sm font-medium text-gray-700 mb-2">
-                                Size <span class="text-red-500">*</span>
-                            </label>
-                            <select id="size" 
-                                    name="size" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                    required>
-                                <option value="">Pilih Size</option>
-                                <option value="XS" {{ old('size') == 'XS' ? 'selected' : '' }}>XS</option>
-                                <option value="S" {{ old('size') == 'S' ? 'selected' : '' }}>S</option>
-                                <option value="M" {{ old('size') == 'M' ? 'selected' : '' }}>M</option>
-                                <option value="L" {{ old('size') == 'L' ? 'selected' : '' }}>L</option>
-                                <option value="XL" {{ old('size') == 'XL' ? 'selected' : '' }}>XL</option>
-                                <option value="XXL" {{ old('size') == 'XXL' ? 'selected' : '' }}>XXL</option>
-                                <option value="3XL" {{ old('size') == '3XL' ? 'selected' : '' }}>3XL</option>
-                            </select>
-                        </div>
-
-                        <!-- Quantity -->
-                        <div>
-                            <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2">
-                                Jumlah <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" 
-                                   id="quantity" 
-                                   name="quantity" 
-                                   min="1" 
-                                   max="{{ $product->stock }}"
-                                   value="{{ old('quantity', 1) }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   required>
-                        </div>
-
-                        <!-- No Bundling -->
-                        <div>
-                            <label for="no_bundling" class="block text-sm font-medium text-gray-700 mb-2">
-                                No. Bundling
-                            </label>
-                            <input type="text" 
-                                   id="no_bundling" 
-                                   name="no_bundling" 
-                                   value="{{ old('no_bundling') }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Opsional">
-                        </div>
+                    <!-- Size -->
+                    <div>
+                        <label for="size" class="block text-sm font-medium text-gray-700 mb-2">
+                            Size <span class="text-red-500">*</span>
+                        </label>
+                        <select id="size" 
+                                name="size" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                required>
+                            <option value="">Pilih Size</option>
+                            <option value="XS" {{ old('size') == 'XS' ? 'selected' : '' }}>XS</option>
+                            <option value="S" {{ old('size') == 'S' ? 'selected' : '' }}>S</option>
+                            <option value="M" {{ old('size') == 'M' ? 'selected' : '' }}>M</option>
+                            <option value="L" {{ old('size') == 'L' ? 'selected' : '' }}>L</option>
+                            <option value="XL" {{ old('size') == 'XL' ? 'selected' : '' }}>XL</option>
+                            <option value="XXL" {{ old('size') == 'XXL' ? 'selected' : '' }}>XXL</option>
+                            <option value="3XL" {{ old('size') == '3XL' ? 'selected' : '' }}>3XL</option>
+                        </select>
                     </div>
 
                     <!-- Metode Pembayaran -->
@@ -260,11 +235,33 @@
                         </div>
                     </div>
 
+                    <!-- QRIS Section -->
+                    <div id="qris-section" class="hidden">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                            <h4 class="text-lg font-semibold text-blue-800 mb-4 text-center">QR Code Pembayaran</h4>
+                            <div class="flex justify-center mb-4">
+                                <!-- Placeholder untuk QRIS image - Anda perlu menyimpan image ini di public/images/ -->
+                                <img src="{{ asset('images/qris-himti.jpg') }}" 
+                                     alt="QRIS HIMTI" 
+                                     class="max-w-xs w-full h-auto border rounded-lg shadow-sm"
+                                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIFFSSVMgVGlkYWsgRGl0ZW11a2FuPC90ZXh0Pjwvc3ZnPg==';">
+                            </div>
+                            <div class="text-center text-sm text-blue-700">
+                                <p class="mb-2"><strong>Ekraf Himti</strong></p>
+                                <p class="mb-2">NMID: ID1025409869357</p>
+                                <p class="mb-4">Scan QR Code di atas untuk melakukan pembayaran</p>
+                                <p class="text-xs text-gray-600">
+                                    Setelah pembayaran berhasil, silakan upload bukti pembayaran (screenshot) di atas
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Total Harga -->
                     <div class="bg-gray-50 rounded-lg p-6">
                         <div class="flex justify-between items-center text-lg">
                             <span class="font-medium text-gray-700">Total Harga:</span>
-                            <span id="total-price" class="font-bold text-2xl text-blue-800">
+                            <span class="font-bold text-2xl text-blue-800">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </span>
                         </div>
@@ -289,20 +286,29 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const quantityInput = document.getElementById('quantity');
-    const totalPriceElement = document.getElementById('total-price');
-    const productPrice = {{ $product->price }};
     const fileInput = document.getElementById('payment_proof');
     const filePreview = document.getElementById('file-preview');
     const fileName = document.getElementById('file-name');
     const removeFileBtn = document.getElementById('remove-file');
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    const qrisSection = document.getElementById('qris-section');
 
-    // Update total price when quantity changes
-    quantityInput.addEventListener('input', function() {
-        const quantity = parseInt(this.value) || 1;
-        const total = productPrice * quantity;
-        totalPriceElement.textContent = 'Rp ' + total.toLocaleString('id-ID');
+    // Show/hide QRIS section based on payment method
+    paymentMethods.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'qris') {
+                qrisSection.classList.remove('hidden');
+            } else {
+                qrisSection.classList.add('hidden');
+            }
+        });
     });
+
+    // Check initial state
+    const checkedPayment = document.querySelector('input[name="payment_method"]:checked');
+    if (checkedPayment && checkedPayment.value === 'qris') {
+        qrisSection.classList.remove('hidden');
+    }
 
     // File upload preview
     fileInput.addEventListener('change', function(e) {

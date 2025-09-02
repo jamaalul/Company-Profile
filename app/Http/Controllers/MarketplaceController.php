@@ -53,27 +53,25 @@ class MarketplaceController extends Controller
     }
 
     public function purchase(Request $request, Product $product)
-    {
+    {     
+
         $validator = Validator::make($request->all(), [
             'customer_name' => 'required|string|max:255',
             'angkatan' => 'required|string|max:10',
-            'bidang' => 'required|in:HIMTI (non hima),Per Departement,Alumni',
+            'bidang' => 'required|in:HIMTI (non hima),Alumni,Medinfo,Pendidikan,Pengmas,Perhubungan,PSDM,Ekraf',
             'customer_phone' => 'required|string|max:20',
             'customer_address' => 'required|string',
             'size' => 'required|in:XS,S,M,L,XL,XXL,3XL',
-            'quantity' => 'required|integer|min:1|max:' . $product->stock,
-            'no_bundling' => 'nullable|string|max:100',
             'payment_method' => 'required|in:cash,qris',
             'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'customer_name.required' => 'Nama lengkap wajib diisi',
             'angkatan.required' => 'Angkatan wajib diisi',
             'bidang.required' => 'Bidang wajib dipilih',
+            'bidang.in' => 'Bidang yang dipilih tidak valid',
             'customer_phone.required' => 'Nomor telepon wajib diisi',
             'customer_address.required' => 'Alamat wajib diisi',
             'size.required' => 'Size wajib dipilih',
-            'quantity.required' => 'Jumlah wajib diisi',
-            'quantity.max' => 'Jumlah tidak boleh melebihi stock yang tersedia',
             'payment_method.required' => 'Metode pembayaran wajib dipilih',
             'payment_proof.required' => 'Bukti pembayaran wajib diupload',
             'payment_proof.image' => 'File harus berupa gambar',
@@ -118,10 +116,9 @@ class MarketplaceController extends Controller
             'angkatan' => $request->angkatan,
             'bidang' => $request->bidang,
             'size' => $request->size,
-            'no_bundling' => $request->no_bundling,
             'payment_method' => $request->payment_method,
-            'payment_proof' => $paymentProofPath, // This will be 'payment_proofs/filename.jpg'
-            'total_amount' => $totalAmount,
+            'payment_proof' => $paymentProofPath,
+            'total_amount' => $product->price, // Karena quantity dihapus, jadi hanya price saja
             'status' => 'pending_confirmation',
         ]);
 
@@ -129,7 +126,7 @@ class MarketplaceController extends Controller
         OrderItem::create([
             'order_id' => $order->id,
             'product_id' => $product->id,
-            'quantity' => $quantity,
+            'quantity' => 1, // Fixed quantity 1
             'price' => $product->price,
         ]);
 
