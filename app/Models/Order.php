@@ -15,32 +15,24 @@ class Order extends Model
         'customer_email',
         'customer_phone',
         'customer_address',
+        'angkatan',
+        'bidang',
+        'size',
+        'no_bundling',
+        'payment_method',
+        'payment_proof',
         'total_amount',
         'status',
-        'payment_method',
-        'payment_id',
-        'payment_data',
-        'paid_at',
+        'admin_notes',
     ];
 
     protected function casts(): array
     {
         return [
             'total_amount' => 'decimal:2',
-            'payment_data' => 'array',
-            'paid_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
         ];
-    }
-
-    protected static function boot()
-    {
-        parent::boot();
-        
-        static::creating(function ($order) {
-            if (empty($order->order_number)) {
-                $order->order_number = 'HIMTI-' . date('Ymd') . '-' . str_pad(static::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT);
-            }
-        });
     }
 
     public function items()
@@ -48,26 +40,51 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
     public function scopePaid($query)
     {
         return $query->where('status', 'paid');
     }
 
-    public function isPaid()
+    public function scopePending($query)
     {
-        return $this->status === 'paid';
+        return $query->where('status', 'pending');
     }
 
-    public function markAsPaid()
+    public function scopePendingConfirmation($query)
     {
-        $this->update([
-            'status' => 'paid',
-            'paid_at' => now(),
-        ]);
+        return $query->where('status', 'pending_confirmation');
+    }
+
+    public function scopeConfirmed($query)
+    {
+        return $query->where('status', 'confirmed');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'rejected');
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        $badges = [
+            'pending_confirmation' => ['class' => 'bg-yellow-100 text-yellow-800', 'text' => 'Menunggu Konfirmasi'],
+            'confirmed' => ['class' => 'bg-green-100 text-green-800', 'text' => 'Dikonfirmasi'],
+            'paid' => ['class' => 'bg-blue-100 text-blue-800', 'text' => 'Lunas'],
+            'rejected' => ['class' => 'bg-red-100 text-red-800', 'text' => 'Ditolak'],
+            'pending' => ['class' => 'bg-gray-100 text-gray-800', 'text' => 'Pending'],
+        ];
+
+        return $badges[$this->status] ?? ['class' => 'bg-gray-100 text-gray-800', 'text' => ucfirst($this->status)];
+    }
+
+    public function canBeConfirmed()
+    {
+        return $this->status === 'pending_confirmation';
+    }
+
+    public function canBeRejected()
+    {
+        return in_array($this->status, ['pending_confirmation', 'confirmed']);
     }
 }

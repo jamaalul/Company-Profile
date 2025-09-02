@@ -17,14 +17,12 @@ return new class extends Migration
             $table->text('customer_address');
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
-            $table->string('payment_method')->nullable();
             $table->string('payment_id')->nullable();
             $table->json('payment_data')->nullable();
             $table->timestamp('paid_at')->nullable();
             $table->timestamps();
             
             $table->index(['order_number']);
-            $table->index(['status']);
         });
     }
 
@@ -33,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('orders');
     }
 };
+    
