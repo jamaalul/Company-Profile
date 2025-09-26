@@ -1,5 +1,3 @@
-{{-- File: resources/views/components/navbar.blade.php --}}
-
 <link rel="stylesheet" href="{{ asset('css/navbar.css') }}">
 
 <nav class="navbar-kustom">
@@ -17,22 +15,30 @@
     <label for="mobile-menu-checkbox" class="hamburger">☰</label>
 
     <div class="menu-container">
-        {{-- KELAS 'border' DIHAPUS DARI SINI --}}
         <a href="/news" class="menu">News</a>
-        <a href="/about" class="menu">About Us</a>
-        <p class="menu sop-toggle">SOP<img class="sop-toggle-img" src="{{ asset('assets/arrow.svg') }}"></p>
-        <p class="menu features-toggle">Features <img class="features-toggle-img" src="{{ asset('assets/arrow.svg') }}"></p>
+        <a href="/coming" class="menu">About Us</a>
+        
+        {{-- INI BAGIAN YANG DIUBAH --}}
+        <div class="menu-item-has-dropdown">
+            <p class="menu sop-toggle">SOP<img class="toggle-img" src="{{ asset('assets/arrow.svg') }}"></p>
+            {{-- Submenu SOP sekarang ada di dalam sini --}}
+            <div class="sub-menu sop-menu">
+                <a href="https://wa.me/6281927833334" class="border-bottom">Partnership</a>
+                <a href="/sop/medinfo">Media Partner</a>
+            </div>
+        </div>
+
+        {{-- INI BAGIAN YANG DIUBAH --}}
+        <div class="menu-item-has-dropdown">
+            <p class="menu features-toggle">Features <img class="toggle-img" src="{{ asset('assets/arrow.svg') }}"></p>
+            {{-- Submenu Features sekarang ada di dalam sini --}}
+            <div class="sub-menu features-menu">
+                <a href="/coming" class="border-bottom">Berkas</a>
+                <a href="/marketplace" class="border-bottom">Marketplace</a>
+                <a href="/portal">Portal</a>
+            </div>
+        </div>
     </div>
 </nav>
 
-{{-- Sub-menu tidak perlu diubah, biarkan seperti ini --}}
-<div class="features sub-menu">
-    <a href="" class="border-bottom">Berkas</a>
-    <a href="" class="border-bottom">Marketplace</a>
-    <a href="/portal">Portal</a>
-</div>
-<div class="SOP sub-menu">
-    <a href="" class="border-bottom">Partnership</a>
-    <a href="">Medinfo</a>
-</div>
 <script src="{{ asset('js/navbar.js') }}"></script>

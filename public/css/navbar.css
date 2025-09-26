@@ -1,6 +1,8 @@
-nav {
+/* =================================
+   1. STYLING DASAR NAVBAR
+   ================================= */
+.navbar-kustom {
     position: fixed;
-    height: fit-content;
     top: 0;
     left: 0;
     width: calc(100% - 6vw);
@@ -15,22 +17,27 @@ nav {
     border-radius: 3vw;
 }
 
-nav a {
+.navbar-kustom a {
     text-decoration: none;
 }
 
+/* Penyesuaian border-radius untuk layar lebih besar */
 @media screen and (min-width: 1024px) {
-    nav {
+    .navbar-kustom {
         border-radius: 1.5vw;
     }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1023px) {
-    nav {
+    .navbar-kustom {
         border-radius: 2vw;
     }
 }
 
+
+/* =================================
+   2. LOGO & BRAND TEXT
+   ================================= */
 .logo-container {
     display: flex;
     align-items: center;
@@ -39,21 +46,8 @@ nav a {
 .logo-container img {
     height: 40px !important;
     width: 40px !important;
-    margin-left: 0px;
     max-width: 100% !important;
     max-height: 40px !important;
-}
-
-@media screen and (max-width: 768px) {
-    .logo-container img {
-        margin-left: -6px;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .logo-container img {
-        margin-left: -10px;
-    }
 }
 
 .brand-text {
@@ -72,6 +66,10 @@ nav a {
     font-weight: 700;
 }
 
+
+/* =================================
+   3. MENU CONTAINER & MENU ITEMS
+   ================================= */
 .menu-container {
     display: flex;
     align-items: center;
@@ -84,25 +82,97 @@ nav a {
     text-decoration: none;
     font-size: 16px;
     display: flex;
-    justify-content: center;
     align-items: center;
     cursor: pointer;
+    gap: 5px; /* Jarak antara teks menu dan panah */
 }
 
-.hamburger {
-    display: none;
-    cursor: pointer;
-    background: none;
-    border: none;
-    font-size: 24px;
+
+/* =================================
+   4. DROPDOWN STYLING (DESKTOP)
+   ================================= */
+.menu-item-has-dropdown {
+    position: relative; /* Kunci utama: Menjadi acuan untuk submenu */
+    display: inline-block;
 }
 
+.toggle-img {
+    transition: transform 0.3s ease; /* Animasi panah berputar */
+}
+
+.sub-menu {
+    display: none; /* Sembunyikan submenu secara default */
+    position: absolute; /* Posisikan relatif terhadap .menu-item-has-dropdown */
+    top: 130%; /* Jarak dari menu induk */
+    right: 0; /* Rata kanan dengan menu induk */
+    background-color: #fff;
+    border-radius: 15px;
+    z-index: 1001;
+    padding: 15px;
+    min-width: 160px; /* Lebar minimum agar tidak terlalu kecil */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Aturan untuk menampilkan submenu (dikontrol oleh JS dengan class 'open') */
+.menu-item-has-dropdown.open .sub-menu {
+    display: flex;
+}
+
+/* Aturan untuk memutar panah saat submenu terbuka */
+.menu-item-has-dropdown.open .toggle-img {
+    transform: rotate(180deg);
+}
+
+.sub-menu a {
+    color: #133d87;
+    text-decoration: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.sub-menu a:hover {
+    background-color: #f0f4f9;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #cbddeb !important;
+    padding-bottom: 8px;
+    margin-bottom: 3px;
+}
+
+
+/* =================================
+   5. MOBILE & TABLET RESPONSIVE
+   ================================= */
+
+/* Hamburger Menu (disembunyikan di desktop) */
+.hamburger,
 #mobile-menu-checkbox {
     display: none;
 }
 
-/* Media queries for responsiveness */
+.hamburger {
+    cursor: pointer;
+    font-size: 24px;
+    color: #133d87;
+}
+
+/* Terapkan untuk layar di bawah 768px */
 @media screen and (max-width: 768px) {
+    /* Munculkan hamburger */
+    .hamburger {
+        display: block;
+    }
+    
+    /* Penyesuaian margin logo */
+    .logo-container img {
+        margin-left: -6px;
+    }
+
+    /* Styling menu container mobile */
     .menu-container {
         position: absolute;
         top: 60px;
@@ -114,41 +184,56 @@ nav a {
         padding: 7px 20px;
         box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
         border-radius: 2vw;
-        display: flex;
-        opacity: 0;
-        transform: translateY(-300px);
-        transition: all 0.2s ease-out;
-        height: fit-content !important;
+        display: none; /* Sembunyikan secara default */
     }
 
+    /* Tampilkan menu saat checkbox di-klik */
+    #mobile-menu-checkbox:checked ~ .menu-container {
+        display: flex;
+    }
+
+    /* Styling setiap item menu di mobile */
     .menu {
         margin: 0;
-        display: block;
         width: 100%;
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        cursor: pointer;
-        padding-block: 6px;
+        justify-content: space-between; /* Panah ke ujung kanan */
+        padding-block: 12px;
+        border-bottom: 1px solid #e0e0e0;
     }
 
-    .border {
-        border-bottom: 1px solid #cbddeb !important;
+    a.menu {
+        justify-content: flex-start; /* Link biasa rata kiri */
     }
 
-    .hamburger {
+    /* Styling wrapper dropdown di mobile */
+    .menu-item-has-dropdown {
+        width: 100%;
         display: block;
     }
 
-    #mobile-menu-checkbox:checked ~ .menu-container {
-        opacity: 1;
-        transform: translateY(0px);
+    /* Styling submenu di mobile agar tampil inline */
+    .sub-menu {
+        position: static; /* Hapus positioning absolute */
+        display: none; /* Tetap tersembunyi default */
+        box-shadow: none;
+        border-radius: 0;
+        padding: 5px 0 10px 20px; /* Beri indentasi */
+        width: 100%;
+        border-bottom: 1px solid #e0e0e0;
+        background-color: #f9f9f9; /* Warna latar sedikit beda */
+    }
+
+    .border-bottom {
+        border-bottom: none !important; /* Hapus border ganda */
     }
 }
 
+/* Penyesuaian untuk layar sangat kecil */
 @media screen and (max-width: 480px) {
     .logo-container img {
         height: 30px;
+        width: 30px;
+        margin-left: -10px;
     }
 
     .brand-text h3 {
@@ -158,51 +243,4 @@ nav a {
     .brand-text b {
         font-size: 14px;
     }
-}
-
-.sub-menu {
-    position: fixed;
-    display: none;
-    flex-direction: column;
-    border-radius: 15px;
-    z-index: 2;
-    background-color: #fff;
-    top: 7.7vw;
-    padding: 15px;
-    gap: 8px;
-    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
-}
-
-/* Breakpoint 2: Tablets (min-width: 768px and max-width: 1023px) */
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    .sub-menu {
-        top: 10.5vw;
-        /* padding: 16px;
-        border-radius: 16px;
-        gap: 9px; */
-    }
-}
-
-.sub-menu a {
-    color: #133d87;
-    text-decoration: none;
-}
-
-.features {
-    right: 3vw;
-}
-
-.SOP {
-    right: 13.5vw;
-}
-
-@media screen and (min-width: 768px) and (max-width: 1023px) {
-    .SOP {
-        right: 20vw;
-    }
-}
-
-.border-bottom {
-    border-bottom: 1px solid #cbddeb !important;
-    padding-bottom: 5px;
 }

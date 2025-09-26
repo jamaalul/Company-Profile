@@ -1,6 +1,16 @@
-@extends('layouts.app')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>PORTAL - Teknik Informatika</title>
+   <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+   <link rel="stylesheet" href="{{ asset('css/portal/index.css') }}">
+   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+   @include('components.navbar')
     <section class="hero-section">
         <div class="container">
             <div class="portal-content">
@@ -12,41 +22,46 @@
             <div class="update-section">
                 <h2 data-aos="zoom-in-down" data-aos-duration="1000">HIMTI UPDATE</h2>
                <div class="update-content" data-aos="fade-left" data-aos-duration="1000">
-                  @php
+                  {{-- @php
                      $updateCount = min(3, count($infoList));
-                  @endphp
-                  @for ($i = 0; $i < $updateCount; $i++)
-                     <div class="update-item" style="{{ $i === 0 ? '' : 'display:none;'}}" onclick="window.location.href='{{ url('/portal/detail/' . $infoList[$i]['id']) }}'">
-                        <div class="item-img"></div>
-                        <div class="item-content">
-                           <h3>{{ $infoList[$i]['title'] }}</h3>
-                           <p>{{ $infoList[$i]['body'] }}</p>
-                           <p class="update-date">{{ \Carbon\Carbon::parse($infoList[$i]['date'])->translatedFormat('j F Y') }}</p>
+                  @endphp --}}
+                  {{-- @for ($i = 0; $i < $updateCount; $i++) --}}
+                    <a href="{{ route('portal.show', $featuredNews) }}">
+                        <div class="update-item" >
+                            <div class="item-img"></div>
+                            <div class="item-content">
+                            <h3>{{ $featuredNews->title }}</h3>
+                            <p>{{ $featuredNews->excerpt }}</p>
+                            <p class="update-date">{{ \Carbon\Carbon::parse($featuredNews->published_at )->translatedFormat('j F Y') }}</p>
+                            </div>
                         </div>
-                     </div>
-                  @endfor
+                    </a>
+                  {{-- @endfor --}}
                </div>
-               <div class="pagination-dots">
+               {{-- <div class="pagination-dots">
                   @for ($i = 0; $i < $updateCount; $i++)
                      <div class="dot{{ $i === 0 ? ' active' : '' }}" data-index="{{ $i }}"></div>
                   @endfor
-               </div>
+               </div> --}}
             </div>
         </div>
     </section>
     <section class="content-section">
       <h2 data-aos="zoom-out" data-aos-duration="1000">INFORMASI TERBARU</h2>
       <div class="info-container">
-         @if (count($infoList) > 0)
-         @foreach($infoList as $index => $info)
-            <div class="info-cards info-card-item {{ $index }}" onclick="window.location.href='{{ url('/portal/detail/') }}'" data-aos="fade-up" data-aos-duration="1000">
-               <div class="top"></div>
-               <div class="bottom">
-                  <h3>{{ \Illuminate\Support\Str::limit($info['title'], 45, '...') }}</h3>
-                  <p>{{ \Illuminate\Support\Str::limit($info['body'], 60, '...') }}</p>
-                  <p>{{ \Carbon\Carbon::parse($info['date'])->translatedFormat('j F Y') }}</p>
-               </div>
-            </div>
+         @if (count($news) > 0)
+         @foreach($news as $article)
+            <a href="{{ route('portal.show', $article) }}">
+                <div class="info-cards info-card-item" data-aos="fade-up" data-aos-duration="1000">
+                <div class="top">
+                     <h3>{{ \Illuminate\Support\Str::limit($article['title']) }}</h3>
+                    {{-- <p>{{ \Illuminate\Support\Str::limit($article['excerpt'], 60, '...') }}</p> --}}
+                </div>
+                <div class="bottom">
+                    <p>{{ \Carbon\Carbon::parse($article['published_at'])->translatedFormat('j F Y') }}</p>
+                </div>
+                </div>
+            </a>
          @endforeach
          @else
             <p class="no-info">Tidak ada informasi saat ini.</p>
@@ -57,9 +72,17 @@
             </script>
          @endif
       </div>
-         @if(count($infoList) > 6)
+         @if(count($news) > 6)
             <button class="show-more-btn">Lihat lebih banyak</button>
          @endif      
       <div class="logo-corner"></div>
     </section>
-@endsection
+   @include('components.footer')
+
+   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script src="{{ asset('js/portal.js') }}"></script>
+   <script>
+      AOS.init();
+   </script>
+</body>
+</html>

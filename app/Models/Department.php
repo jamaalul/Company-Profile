@@ -2,9 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Department extends Model
 {
-    protected $table = 'department';
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'leadership_photo',
+        'slug',
+    ];
+
+    /**
+     * Mendapatkan detail yang terhubung dengan departemen.
+     */
+    public function detail(): HasOne
+    {
+        return $this->hasOne(DetailDepartment::class);
+    }
+    public function subDepartments()
+    {
+        return $this->hasMany(SubDepartment::class);
+    }
 }

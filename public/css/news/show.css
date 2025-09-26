@@ -1,206 +1,304 @@
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 10vw;
+a {
+    text-decoration: none;
 }
-
-/* Typography */
-section h1,
-section h2,
-section h3 {
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-section h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-section h3 {
-    font-size: 1.3rem;
-}
-
-section p {
-    margin-bottom: 1rem;
-}
-
-/* Hero Section */
 .hero {
     width: 100%;
-    aspect-ratio: 1923/860;
-    min-height: 300px;
-    background-color: #d9d9d9;
-    background-image: url("/placeholder.svg?height=843&width=1923");
+    aspect-ratio: 1924 / 842;
     background-size: cover;
     background-position: center;
     position: relative;
+    min-height: 300px; /* Minimum height for small screens */
 }
 
-.hero-content {
+.hero .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+
+    /* background gambar dari featured image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    /* overlay warna biru transparan */
+    background-blend-mode: overlay;
+    background-color: rgba(73, 142, 195, 0.5);
+}
+
+.overlay-content {
+    color: white;
     display: flex;
     flex-direction: column;
+    gap: 10px; /* jarak antar teks */
+    max-width: 80%;
+}
+
+.overlay-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.overlay-content p {
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Content section */
+.content {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 5rem;
+    background-color: #fff;
+}
+
+.info {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #fff;
+    padding: 6rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 5%;
+    z-index: 1;
+}
+
+.info h1 {
+    font-size: 2rem;
+    text-align: center;
+    color: #133d87;
+    max-width: 40%;
+    margin: 0 auto 1rem auto;
+}
+
+.date {
+    text-align: center;
+    color: #498ec3;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.body p {
+    line-height: 1.6;
+}
+
+/* Additional section */
+.additional {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1rem;
+    height: fit-content;
+    align-items: center;
+}
+
+.additional h2 {
+    color: #fff;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.other-info {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.image-wrapper {
+    display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 2rem;
-    background-color: rgba(96, 139, 192, 0.7);
-    color: white;
 }
 
-.hero-content h1 {
-    max-width: 35vw;
-    padding-top: 6vw;
-}
-
-.article-meta {
-    display: flex;
-    gap: 20px;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-}
-
-/* News Body */
-.news-body {
-    padding: 4rem 0;
-    background-color: white;
-}
-
-.news-body article {
-    max-width: 800px;
-    margin: 0 auto;
-    font-size: 1.1rem;
-    line-height: 1.8;
-    text-align: justify;
-}
-
-/* Info Lainnya Section */
-.info-lainnya {
-    padding: 4rem 0;
-    background: linear-gradient(
-        148deg,
-        rgba(19, 61, 135, 1) 0%,
-        rgba(96, 139, 192, 1) 100%
-    );
-    color: white;
-}
-
-.cards-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
-    margin-top: 2rem;
+.news-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    /* border: 6px solid #133d87; warna border */
+    border-radius: 20px; /* bentuk membulat natural */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15); /* shadow lembut */
+    object-fit: cover;
 }
 
 .info-card {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    transition: transform 0.3s ease;
+    width: 300px;
+    height: fit-content;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .info-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.card-image {
-    width: 100%;
-    aspect-ratio: 366 / 258;
-    background-color: #d9d9d9;
-    border-radius: 8px;
+.info-card .top {
+    height: 160px;
+    background:
+        linear-gradient(rgba(73, 142, 195, 0.6), rgba(73, 142, 195, 0.6)),
+        url('/assets/logo_himpunan.png') center/80px no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
-.card-title {
-    font-weight: 700;
-    margin: 10px 0 5px;
+.info-card .top h3 {
+    color: white;
+    font-size: 1.1rem;
+    padding: 0 10px;
+    z-index: 1;
 }
 
-.meta {
+.info-card .bottom {
+    height: 50px;
+    background-color: white;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-card .bottom .date {
     font-size: 0.9rem;
-    opacity: 0.9;
+    color: #686868;
 }
 
-.meta p {
-    margin-bottom: 0.3rem;
+.bottom h3 {
+    color: #133d87;
+    margin-bottom: 0.5rem;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
-    .cards-container {
-        grid-template-columns: repeat(2, 1fr);
+.bottom p {
+    color: #333;
+    font-size: 0.9rem;
+    text-align: left;
+    margin-bottom: 0.5rem;
+}
+
+.bottom .date {
+    font-size: 0.8rem;
+    text-align: left;
+    margin-top: auto;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1200px) {
+    .info {
+        width: 95%;
     }
 }
 
-@media (max-width: 768px) {
-    section h1 {
+@media screen and (max-width: 992px) {
+    .hero {
+        aspect-ratio: 16 / 9; /* Adjusted aspect ratio for medium screens */
+    }
+
+    .info h1 {
+        max-width: 90%;
+        font-size: 1.8rem;
+    }
+
+    .other-info {
+        gap: 1rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        aspect-ratio: 3 / 2; /* Adjusted aspect ratio for smaller screens */
+    }
+
+    .info {
+        width: 90%;
+        padding: 1.5rem;
+        margin-top: -10%;
+    }
+
+    .info h1 {
+        font-size: 1.5rem;
+        max-width: 100%;
+    }
+
+    .additional h2 {
         font-size: 1.5rem;
     }
 
-    section h2 {
-        font-size: 1.2rem;
-    }
-
-    section p {
-        font-size: 1rem;
-    }
-
-    .hero {
-        height: fit-content;
-    }
-
-    .article-meta {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .news-body {
-        padding: 2rem 0;
-    }
-
-    .news-body article {
-        font-size: 1rem;
-        line-height: 1.6;
-    }
-
-    .hero-content h1 {
-        max-width: 60vw;
+    .info-card {
+        width: 100%;
+        max-width: 350px;
     }
 }
 
-@media (max-width: 576px) {
-    .cards-container {
-        grid-template-columns: 1fr;
+@media screen and (max-width: 576px) {
+    .hero {
+        aspect-ratio: 1 / 1; /* Square aspect ratio for mobile */
+        min-height: 250px;
     }
 
-    .info-lainnya {
-        padding: 3rem 0;
+    .info {
+        width: 95%;
+        padding: 1.25rem;
+        margin-top: -15%;
     }
 
-    section h1 {
+    .info h1 {
         font-size: 1.3rem;
     }
 
-    section h2 {
+    .date {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .additional {
+        padding: 1.5rem 0.75rem;
+    }
+
+    .additional h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .other-info {
+        gap: 1rem;
+    }
+
+    .info-card .top {
+        height: 150px;
+    }
+
+    .info-card .bottom {
+        min-height: 100px;
+        padding: 0.75rem;
+    }
+
+    .bottom h3 {
         font-size: 1rem;
     }
 
-    section p {
+    .bottom p {
         font-size: 0.8rem;
-    }
-
-    .hero {
-        height: fit-content;
-    }
-
-    .hero-content h1 {
-        padding-top: 10vh;
     }
 }

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'HIMTI - Teknik Informatika')
+
 @section('content')
     <style>
     .animate,
