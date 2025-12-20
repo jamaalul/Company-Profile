@@ -3,6 +3,7 @@
 @section('title', 'HIMTI - Teknik Informatika')
 
 @section('content')
+    <link rel="stylesheet" href="{{ asset('css/compro.css') }}">
     <style>
     .animate,
     .animate-load {

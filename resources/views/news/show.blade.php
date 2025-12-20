@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>NEWS - Teknik Informatika</title>
-   <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+@extends('layouts.app')
+
+@section('content')
    <link rel="stylesheet" href="{{ asset('css/news/show.css') }}">
-   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-</head>
-<body>
-   @include('components.navbar')
     <section class="hero">
         <div class="overlay" style="background-image: url('{{ asset('images/news/medinfo.png') }}');">
             <div class="overlay-content">
@@ -57,12 +48,4 @@
          </div>
       </div>
    </section>
-   @include('components.footer')
-
-   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script src="{{ asset('js/portal.js') }}"></script>
-   <script>
-      AOS.init();
-   </script>
-</body>
-</html>
+@endsection

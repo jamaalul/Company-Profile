@@ -1,9 +1,7 @@
 @extends('layouts.app')
 
-
-@section('title', 'NEWS - Teknik Informatika')
-
 @section('content')
+<link rel="stylesheet" href="{{ asset('css/news/index.css') }}">
 {{-- Bagian Highlight Berita Teratas --}}
 <section class="highlight px-4 py-8 -mt-6">
     <h1 class="text-3xl font-bold text-center mb-6">HIMTI NEWS</h1>
