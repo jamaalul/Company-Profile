@@ -16,7 +16,7 @@
 
     <div class="menu-container">
         <a href="/news" class="menu">News</a>
-        <a href="/coming" class="menu">About Us</a>
+        <a href="/about-us" class="menu">About Us</a>
         
         {{-- INI BAGIAN YANG DIUBAH --}}
         <div class="menu-item-has-dropdown">
