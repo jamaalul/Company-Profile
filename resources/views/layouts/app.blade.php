@@ -13,7 +13,6 @@
     <link href="{{ asset('css/common.css') }}" rel="stylesheet">
     {{-- <link rel="stylesheet" href="{{ asset('css/animations.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/global.css') }}">
-    <link href="http://127.0.0.1:8000/css/common.css" rel="stylesheet">
 </head>
 
 <body>
