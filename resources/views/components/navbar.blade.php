@@ -23,7 +23,7 @@
             <p class="menu sop-toggle">SOP<img class="toggle-img" src="{{ asset('assets/arrow.svg') }}"></p>
             {{-- Submenu SOP sekarang ada di dalam sini --}}
             <div class="sub-menu sop-menu">
-                <a href="https://wa.me/6281927833334" class="border-bottom">Partnership</a>
+                <a href="https://wa.me/6283114845462" class="border-bottom">Partnership</a>
                 <a href="/sop/medinfo">Media Partner</a>
             </div>
         </div>
