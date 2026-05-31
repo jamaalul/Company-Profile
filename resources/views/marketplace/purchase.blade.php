@@ -1,329 +1,357 @@
-@extends('layouts.app')
+@extends('layouts.app-plain')
 
-@section('title', 'Form Pembelian - ' . $product->name)
+@section('title', 'Checkout \ ' . $product->name)
 
 @section('content')
-<section class="bg-gray-50 min-h-screen py-16">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto">
-            <!-- Product Info Header -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                <div class="flex flex-col md:flex-row items-center gap-6">
-                    <img src="{{ $product->featured_image ? asset('storage/' . $product->featured_image) : '/placeholder.svg?height=150&width=150' }}" 
-                         alt="{{ $product->name }}"
-                         class="w-32 h-32 object-cover rounded-lg">
-                    <div class="flex-1 text-center md:text-left">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">{{ $product->name }}</h1>
-                        <p class="text-3xl font-bold text-blue-800 mb-2">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                        <p class="text-gray-600">Stock tersedia: {{ $product->stock }} item</p>
-                    </div>
-                </div>
+    <section class="bg-gray-50 py-16 min-h-screen">
+        <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl container">
+
+            {{-- Breadcrumb --}}
+            <nav class="flex mb-8 text-gray-500 text-sm" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="{{ route('marketplace.index') }}"
+                            class="hover:text-blue-600 transition-colors">Marketplace</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="mx-1 w-3 h-3 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 9 4-4-4-4" />
+                            </svg>
+                            <a href="{{ route('marketplace.show', $product->id) }}"
+                                class="hover:text-blue-600 transition-colors">{{ Str::limit($product->name, 30) }}</a>
+                        </div>
+                    </li>
+                    <li aria-current="page">
+                        <div class="flex items-center">
+                            <svg class="mx-1 w-3 h-3 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m1 9 4-4-4-4" />
+                            </svg>
+                            <span class="ml-1 font-medium text-gray-700">Checkout</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            {{-- Page Header --}}
+            <div class="mb-8">
+                <h1 class="mb-2 font-bold text-gray-900 text-3xl md:text-4xl">Konfirmasi Pesanan</h1>
+                <p class="text-gray-600">Isi data dengan benar. Pesanan akan diproses setelah pembayaran dikonfirmasi.</p>
             </div>
 
-            <!-- Purchase Form -->
-            <div class="bg-white rounded-lg shadow-lg p-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Form Pembelian</h2>
-                
-                @if ($errors->any())
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">Terdapat kesalahan pada form:</h3>
-                                <div class="mt-2 text-sm text-red-700">
-                                    <ul class="list-disc list-inside space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
+            <div class="bg-white shadow-sm p-6 md:p-8 border border-gray-100 rounded-2xl">
+                {{-- Product strip --}}
+                <div class="flex sm:flex-row flex-col sm:items-center gap-4 mb-8 pb-6 border-gray-100 border-b">
+                    <div class="bg-gray-100 rounded-lg w-24 h-24 overflow-hidden shrink-0">
+                        @if($product->image_path)
+                            <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
+                                class="w-full h-full object-cover">
+                        @else
+                            <img src="/placeholder.svg?height=96&width=96" alt="{{ $product->name }}"
+                                class="w-full h-full object-cover">
+                        @endif
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="mb-1 font-bold text-gray-900 text-lg md:text-xl line-clamp-2">{{ $product->name }}</h2>
+                        <p class="mb-2 text-gray-500 text-sm">Stok tersedia: {{ $product->stock }} item</p>
+                    </div>
+                    <div class="sm:text-right shrink-0">
+                        <p class="font-bold text-blue-800 text-xl md:text-2xl">Rp
+                            {{ number_format($product->price, 0, ',', '.') }}
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Alerts --}}
+                @if(session('error'))
+                    <div class="flex items-start gap-3 bg-red-50 mb-6 p-4 border-red-500 border-l-4 rounded-r-lg">
+                        <svg class="mt-0.5 w-5 h-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <div>
+                            <p class="font-bold text-red-800 text-sm">Oops!</p>
+                            <p class="mt-1 text-red-700 text-sm">{{ session('error') }}</p>
                         </div>
                     </div>
                 @endif
 
-                <form action="{{ route('marketplace.purchase', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @if($errors->any())
+                    <div class="flex items-start gap-3 bg-red-50 mb-6 p-4 border-red-500 border-l-4 rounded-r-lg">
+                        <svg class="mt-0.5 w-5 h-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                            fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <div>
+                            <p class="font-bold text-red-800 text-sm">Terdapat Kesalahan</p>
+                            <ul class="space-y-1 mt-1 text-red-700 text-sm list-disc list-inside">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Form --}}
+                <form action="{{ route('marketplace.purchase') }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-8">
                     @csrf
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Nama -->
-                        <div>
-                            <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Nama Lengkap <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   id="customer_name" 
-                                   name="customer_name" 
-                                   value="{{ old('customer_name') }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Masukkan nama lengkap"
-                                   required>
-                        </div>
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <input type="hidden" name="quantity" value="1" id="quantity-input">
+                    <input type="hidden" name="payment_method" value="qris">
 
-                        <!-- Angkatan -->
-                        <div>
-                            <label for="angkatan" class="block text-sm font-medium text-gray-700 mb-2">
-                                Angkatan <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   id="angkatan" 
-                                   name="angkatan" 
-                                   value="{{ old('angkatan') }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Contoh: 2021, 2022, dst"
-                                   required>
-                        </div>
-
-                        <!-- Bidang -->
-                        <div>
-                            <label for="bidang" class="block text-sm font-medium text-gray-700 mb-2">
-                                Bidang <span class="text-red-500">*</span>
-                            </label>
-                            <select id="bidang" 
-                                    name="bidang" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                    required>
-                                <option value="">Pilih Bidang</option>
-                                <option value="HIMTI (non hima)" {{ old('bidang') == 'HIMTI (non hima)' ? 'selected' : '' }}>HIMTI (non hima)</option>
-                                <option value="Alumni" {{ old('bidang') == 'Alumni' ? 'selected' : '' }}>Alumni</option>
-                                <option value="Medinfo" {{ old('bidang') == 'Medinfo' ? 'selected' : '' }}>Medinfo</option>
-                                <option value="Pendidikan" {{ old('bidang') == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
-                                <option value="Pengmas" {{ old('bidang') == 'Pengmas' ? 'selected' : '' }}>Pengmas</option>
-                                <option value="Perhubungan" {{ old('bidang') == 'Perhubungan' ? 'selected' : '' }}>Perhubungan</option>
-                                <option value="PSDM" {{ old('bidang') == 'PSDM' ? 'selected' : '' }}>PSDM</option>
-                                <option value="Ekraf" {{ old('bidang') == 'Ekraf' ? 'selected' : '' }}>Ekraf</option>
-                            </select>
-                        </div>
-
-                        <!-- No Telp -->
-                        <div>
-                            <label for="customer_phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                No. Telepon <span class="text-red-500">*</span>
-                            </label>
-                            <input type="tel" 
-                                   id="customer_phone" 
-                                   name="customer_phone" 
-                                   value="{{ old('customer_phone') }}"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                   placeholder="Contoh: 08123456789"
-                                   required>
-                        </div>
-                    </div>
-
-                    <!-- Alamat -->
+                    {{-- Section 1: Informasi Pembeli --}}
                     <div>
-                        <label for="customer_address" class="block text-sm font-medium text-gray-700 mb-2">
-                            Alamat Lengkap <span class="text-red-500">*</span>
-                        </label>
-                        <textarea id="customer_address" 
-                                  name="customer_address" 
-                                  rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                  placeholder="Masukkan alamat lengkap untuk pengiriman"
-                                  required>{{ old('customer_address') }}</textarea>
-                    </div>
+                        <div class="flex items-center gap-3 mb-6">
+                            <span
+                                class="flex justify-center items-center bg-gray-900 rounded-full w-6 h-6 font-bold text-white text-xs">1</span>
+                            <h3 class="font-bold text-gray-500 text-xs md:text-sm uppercase tracking-widest">Informasi
+                                Pembeli</h3>
+                        </div>
 
-                    <!-- Size -->
-                    <div>
-                        <label for="size" class="block text-sm font-medium text-gray-700 mb-2">
-                            Size <span class="text-red-500">*</span>
-                        </label>
-                        <select id="size" 
-                                name="size" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                required>
-                            <option value="">Pilih Size</option>
-                            <option value="XS" {{ old('size') == 'XS' ? 'selected' : '' }}>XS</option>
-                            <option value="S" {{ old('size') == 'S' ? 'selected' : '' }}>S</option>
-                            <option value="M" {{ old('size') == 'M' ? 'selected' : '' }}>M</option>
-                            <option value="L" {{ old('size') == 'L' ? 'selected' : '' }}>L</option>
-                            <option value="XL" {{ old('size') == 'XL' ? 'selected' : '' }}>XL</option>
-                            <option value="XXL" {{ old('size') == 'XXL' ? 'selected' : '' }}>XXL</option>
-                            <option value="3XL" {{ old('size') == '3XL' ? 'selected' : '' }}>3XL</option>
-                        </select>
-                    </div>
-
-                    <!-- Metode Pembayaran -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-4">
-                            Metode Pembayaran <span class="text-red-500">*</span>
-                        </label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="relative">
-                                <input type="radio" 
-                                       id="cash" 
-                                       name="payment_method" 
-                                       value="cash"
-                                       class="peer sr-only"
-                                       {{ old('payment_method') == 'cash' ? 'checked' : '' }}>
-                                <label for="cash" 
-                                       class="flex items-center justify-center w-full p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition duration-200">
-                                    <div class="text-center">
-                                        <svg class="w-8 h-8 text-green-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">Cash</span>
-                                        <p class="text-sm text-gray-600">Bayar tunai</p>
-                                    </div>
-                                </label>
+                        <div class="gap-6 grid grid-cols-1 md:grid-cols-2">
+                            <div class="col-span-1 md:col-span-2">
+                                <label for="customer_name" class="block mb-2 font-semibold text-gray-700 text-sm">Nama
+                                    Lengkap <span class="text-red-500">*</span></label>
+                                <input type="text" id="customer_name" name="customer_name"
+                                    value="{{ old('customer_name') }}"
+                                    class="bg-gray-50 focus:bg-white focus:ring-opacity-50 px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full text-gray-900 transition-colors"
+                                    placeholder="Masukkan nama lengkap" required>
                             </div>
-                            
-                            <div class="relative">
-                                <input type="radio" 
-                                       id="qris" 
-                                       name="payment_method" 
-                                       value="qris"
-                                       class="peer sr-only"
-                                       {{ old('payment_method') == 'qris' ? 'checked' : '' }}>
-                                <label for="qris" 
-                                       class="flex items-center justify-center w-full p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition duration-200">
-                                    <div class="text-center">
-                                        <svg class="w-8 h-8 text-blue-600 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">QRIS</span>
-                                        <p class="text-sm text-gray-600">Scan QR Code</p>
-                                    </div>
-                                </label>
+                            <div>
+                                <label for="customer_email" class="block mb-2 font-semibold text-gray-700 text-sm">Alamat
+                                    Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="customer_email" name="customer_email"
+                                    value="{{ old('customer_email') }}"
+                                    class="bg-gray-50 focus:bg-white focus:ring-opacity-50 px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full text-gray-900 transition-colors"
+                                    placeholder="nama@email.com" required>
+                            </div>
+                            <div>
+                                <label for="customer_phone" class="block mb-2 font-semibold text-gray-700 text-sm">No.
+                                    Telepon / WhatsApp <span class="text-red-500">*</span></label>
+                                <input type="tel" id="customer_phone" name="customer_phone"
+                                    value="{{ old('customer_phone') }}"
+                                    class="bg-gray-50 focus:bg-white focus:ring-opacity-50 px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full text-gray-900 transition-colors"
+                                    placeholder="08123456789" required>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Bukti Pembayaran -->
+                    {{-- Section 2: Informasi Tambahan (dynamic fields) --}}
+                    @if($product->fields->count() > 0)
+                        <hr class="border-gray-100">
+
+                        <div>
+                            <div class="flex items-center gap-3 mb-6">
+                                <span
+                                    class="flex justify-center items-center bg-gray-900 rounded-full w-6 h-6 font-bold text-white text-xs">2</span>
+                                <h3 class="font-bold text-gray-500 text-xs md:text-sm uppercase tracking-widest">Informasi
+                                    Tambahan</h3>
+                            </div>
+
+                            <div class="gap-6 grid grid-cols-1 md:grid-cols-2">
+                                @foreach($product->fields as $field)
+                                    @php $fieldName = 'field_' . $field->id; @endphp
+                                    <div class="{{ $field->field_type === 'file' ? 'col-span-1 md:col-span-2' : '' }}">
+                                        <label class="block mb-2 font-semibold text-gray-700 text-sm">
+                                            {{ $field->label }}
+                                            @if($field->is_required)<span class="text-red-500">*</span>@endif
+                                        </label>
+
+                                        @if($field->field_type === 'text')
+                                            <input type="text" name="{{ $fieldName }}"
+                                                class="bg-gray-50 focus:bg-white focus:ring-opacity-50 px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full text-gray-900 transition-colors"
+                                                {{ $field->is_required ? 'required' : '' }}>
+
+                                        @elseif($field->field_type === 'dropdown')
+                                            <select name="{{ $fieldName }}"
+                                                style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e&quot;); background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em;"
+                                                class="bg-gray-50 focus:bg-white focus:ring-opacity-50 px-4 py-3 pr-10 border border-gray-300 focus:border-blue-500 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full text-gray-900 transition-colors appearance-none"
+                                                {{ $field->is_required ? 'required' : '' }}>
+                                                <option value="">Pilih opsi...</option>
+                                                @foreach($field->dropdown_options ?? [] as $option)
+                                                    <option value="{{ $option }}">{{ $option }}</option>
+                                                @endforeach
+                                            </select>
+
+                                        @elseif($field->field_type === 'file')
+                                            <input type="file" name="{{ $fieldName }}" accept="image/*"
+                                                class="bg-gray-50 hover:file:bg-blue-100 focus:bg-white file:bg-blue-50 focus:ring-opacity-50 file:mr-4 file:px-4 file:py-3 border border-gray-300 focus:border-blue-500 file:border-0 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 w-full file:font-semibold text-gray-900 file:text-blue-700 file:text-sm transition-colors file:cursor-pointer"
+                                                {{ $field->is_required ? 'required' : '' }}>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Section 3: Pembayaran --}}
+                    <hr class="border-gray-100">
+
                     <div>
-                        <label for="payment_proof" class="block text-sm font-medium text-gray-700 mb-2">
-                            Bukti Pembayaran <span class="text-red-500">*</span>
-                        </label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition duration-200">
-                            <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <div class="flex items-center gap-3 mb-6">
+                            <span
+                                class="flex justify-center items-center bg-gray-900 rounded-full w-6 h-6 font-bold text-white text-xs">{{ $product->fields->count() > 0 ? '3' : '2' }}</span>
+                            <h3 class="font-bold text-gray-500 text-xs md:text-sm uppercase tracking-widest">Pembayaran via
+                                QRIS</h3>
+                        </div>
+
+                        {{-- QRIS block --}}
+                        <div
+                            class="flex md:flex-row flex-col items-center md:items-start gap-6 md:gap-8 py-6 border-gray-200 border-y border-dashed">
+                            <div class="bg-white border border-gray-200 h-auto shrink-0">
+                                <img src="{{ asset('assets/qris.png') }}" alt="QRIS Himti"
+                                    class="w-64 object-center object-contain">
+                            </div>
+                            <div class="flex-1 w-full md:text-left text-center">
+                                <h4 class="mb-4 font-bold text-gray-900 text-sm md:text-base uppercase tracking-widest">
+                                    Ekraf Himti</h4>
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex justify-center md:justify-start text-sm">
+                                        <span
+                                            class="mt-0.5 w-20 font-medium text-gray-500 text-xs uppercase tracking-widest">NMID</span>
+                                        <span class="font-bold text-gray-900">ID1025409869357</span>
+                                    </div>
+                                    <div class="flex justify-center md:justify-start text-sm">
+                                        <span
+                                            class="mt-0.5 w-20 font-medium text-gray-500 text-xs uppercase tracking-widest">Metode</span>
+                                        <span class="font-bold text-gray-900">QRIS — Semua e-wallet & M-Banking</span>
+                                    </div>
+                                </div>
+                                <div
+                                    class="inline-block bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
+                                    Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload screenshot
+                                    bukti pembayaran di bawah ini.
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Upload Bukti Pembayaran --}}
+                        <div class="mt-8">
+                            <label class="block mb-2 font-semibold text-gray-700 text-sm">Bukti Pembayaran <span
+                                    class="text-red-500">*</span></label>
+
+                            <div class="group relative bg-white p-8 md:p-12 border-2 border-gray-300 hover:border-blue-500 border-dashed rounded-xl text-center transition-colors cursor-pointer"
+                                id="upload-zone">
+                                <svg class="mx-auto mb-3 w-10 h-10 text-gray-400 group-hover:text-blue-500 transition-colors"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                                 </svg>
-                                <div class="flex text-sm text-gray-600">
-                                    <label for="payment_proof" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                        <span>Upload bukti pembayaran</span>
-                                        <input id="payment_proof" 
-                                               name="payment_proof" 
-                                               type="file" 
-                                               accept="image/*"
-                                               class="sr-only"
-                                               required>
-                                    </label>
-                                    <p class="pl-1">atau drag and drop</p>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG, JPEG hingga 2MB</p>
+                                <div class="text-gray-600 text-sm"><strong class="text-blue-700">Pilih file</strong> atau
+                                    drag &amp; drop di sini</div>
+                                <div class="mt-2 text-gray-500 text-xs">PNG, JPG, JPEG — Maks. 5 MB</div>
+                                <input id="payment_proof" name="payment_proof" type="file" accept="image/*"
+                                    class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" required>
                             </div>
-                        </div>
-                        <div id="file-preview" class="mt-4 hidden">
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+
+                            <div class="flex justify-between items-center bg-green-50 mt-4 p-4 border border-green-200 rounded-xl"
+                                id="file-preview" style="display:none;">
+                                <div class="flex items-center gap-3">
+                                    <svg class="w-6 h-6 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd" />
                                     </svg>
-                                    <span id="file-name" class="text-sm text-gray-700"></span>
+                                    <span class="max-w-xs md:max-w-md font-medium text-gray-900 text-sm truncate"
+                                        id="file-name"></span>
                                 </div>
-                                <button type="button" id="remove-file" class="text-red-500 hover:text-red-700">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                <button type="button"
+                                    class="bg-white hover:bg-red-50 p-1.5 rounded-md focus:outline-none text-gray-400 hover:text-red-500 transition-colors"
+                                    id="remove-file" aria-label="Hapus file">
+                                    <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                            clip-rule="evenodd" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- QRIS Section -->
-                    <div id="qris-section" class="hidden">
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                            <h4 class="text-lg font-semibold text-blue-800 mb-4 text-center">QR Code Pembayaran</h4>
-                            <div class="flex justify-center mb-4">
-                                <!-- Placeholder untuk QRIS image - Anda perlu menyimpan image ini di public/images/ -->
-                                <img src="{{ asset('images/qris-himti.jpg') }}" 
-                                     alt="QRIS HIMTI" 
-                                     class="max-w-xs w-full h-auto border rounded-lg shadow-sm"
-                                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIFFSSVMgVGlkYWsgRGl0ZW11a2FuPC90ZXh0Pjwvc3ZnPg==';">
+                    {{-- Order summary --}}
+                    <div class="mt-10 pt-6 border-gray-200 border-t-2">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-gray-500 text-xs md:text-sm uppercase tracking-widest">Total
+                                    Pembayaran</div>
+                                <div class="mt-1 font-medium text-gray-500 text-sm">1 item &times; Rp
+                                    {{ number_format($product->price, 0, ',', '.') }}
+                                </div>
                             </div>
-                            <div class="text-center text-sm text-blue-700">
-                                <p class="mb-2"><strong>Ekraf Himti</strong></p>
-                                <p class="mb-2">NMID: ID1025409869357</p>
-                                <p class="mb-4">Scan QR Code di atas untuk melakukan pembayaran</p>
-                                <p class="text-xs text-gray-600">
-                                    Setelah pembayaran berhasil, silakan upload bukti pembayaran (screenshot) di atas
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Harga -->
-                    <div class="bg-gray-50 rounded-lg p-6">
-                        <div class="flex justify-between items-center text-lg">
-                            <span class="font-medium text-gray-700">Total Harga:</span>
-                            <span class="font-bold text-2xl text-blue-800">
+                            <div class="font-bold text-blue-800 text-2xl md:text-4xl tracking-tight"
+                                id="total-price-display">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="flex flex-col sm:flex-row gap-4 pt-6">
-                        <a href="{{ route('marketplace.show', $product) }}" 
-                           class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition duration-200 text-center">
+                    {{-- Actions --}}
+                    <div class="flex md:flex-row flex-col gap-4 mt-8 pt-4">
+                        <a href="{{ route('marketplace.show', $product->id) }}"
+                            class="flex justify-center items-center bg-white hover:bg-gray-50 px-8 py-3.5 border border-gray-200 rounded-xl font-semibold text-gray-700 text-center transition-colors">
                             Kembali
                         </a>
-                        <button type="submit" 
-                                class="flex-1 px-6 py-3 bg-blue-800 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Kirim Pesanan
+                        <button type="submit"
+                            class="flex flex-1 justify-center items-center gap-2 bg-blue-700 hover:bg-blue-500 px-8 py-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-semibold text-white transition-colors">
+                            Buat Pesanan
                         </button>
                     </div>
+
                 </form>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('payment_proof');
-    const filePreview = document.getElementById('file-preview');
-    const fileName = document.getElementById('file-name');
-    const removeFileBtn = document.getElementById('remove-file');
-    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
-    const qrisSection = document.getElementById('qris-section');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fileInput = document.getElementById('payment_proof');
+            const filePreview = document.getElementById('file-preview');
+            const fileName = document.getElementById('file-name');
+            const removeBtn = document.getElementById('remove-file');
+            const uploadZone = document.getElementById('upload-zone');
 
-    // Show/hide QRIS section based on payment method
-    paymentMethods.forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.value === 'qris') {
-                qrisSection.classList.remove('hidden');
-            } else {
-                qrisSection.classList.add('hidden');
-            }
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                    filePreview.style.display = 'flex';
+
+                    // Tailwind dynamic classes for active state
+                    uploadZone.classList.remove('border-gray-300', 'bg-white');
+                    uploadZone.classList.add('border-green-500', 'bg-green-50');
+                }
+            });
+
+            removeBtn.addEventListener('click', function () {
+                fileInput.value = '';
+                filePreview.style.display = 'none';
+
+                // Revert Tailwind classes
+                uploadZone.classList.remove('border-green-500', 'bg-green-50');
+                uploadZone.classList.add('border-gray-300', 'bg-white');
+            });
+
+            // Drag-and-drop visual feedback
+            uploadZone.addEventListener('dragover', () => {
+                uploadZone.classList.add('border-blue-500', 'bg-blue-50');
+            });
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
+            uploadZone.addEventListener('drop', () => {
+                uploadZone.classList.remove('border-blue-500', 'bg-blue-50');
+            });
         });
-    });
-
-    // Check initial state
-    const checkedPayment = document.querySelector('input[name="payment_method"]:checked');
-    if (checkedPayment && checkedPayment.value === 'qris') {
-        qrisSection.classList.remove('hidden');
-    }
-
-    // File upload preview
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            fileName.textContent = file.name;
-            filePreview.classList.remove('hidden');
-        }
-    });
-
-    // Remove file
-    removeFileBtn.addEventListener('click', function() {
-        fileInput.value = '';
-        filePreview.classList.add('hidden');
-    });
-});
-</script>
+    </script>
 @endsection

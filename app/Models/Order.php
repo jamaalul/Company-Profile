@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Order extends Model
 {
@@ -11,79 +13,63 @@ class Order extends Model
 
     protected $fillable = [
         'order_number',
-        'customer_name',
-        'customer_email',
-        'customer_phone',
-        'customer_address',
-        'angkatan',
-        'bidang',
-        'size',
-        'payment_method',
-        'payment_proof',
-        'total_amount',
+        'tracking_token',
+        'buyer_name',
+        'buyer_email',
+        'buyer_whatsapp',
+        'total_price',
         'status',
-        'admin_notes',
+        'payment_proof_path',
+        'paid_at',
+        'is_preorder',
+    ];
+
+    protected $hidden = [
+        'tracking_token',
     ];
 
     protected function casts(): array
     {
         return [
-            'total_amount' => 'decimal:2',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
+            'status' => OrderStatus::class,
+            'paid_at' => 'datetime',
+            'total_price' => 'decimal:2',
+            'is_preorder' => 'boolean',
         ];
     }
 
-    public function items()
+    protected static function booted(): void
+    {
+        static::updated(function (Order $order) {
+            if ($order->isDirty('status') && in_array($order->status, [OrderStatus::Completed, OrderStatus::Rejected])) {
+                $order->loadMissing('items.fieldValues');
+                foreach ($order->items as $item) {
+                    foreach ($item->fieldValues as $fieldValue) {
+                        if ($fieldValue->file_path) {
+                            \Illuminate\Support\Facades\Storage::disk('public')->delete($fieldValue->file_path);
+                            $fieldValue->update(['file_path' => null]);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    public function scopePaid($query)
+    public function getTrackingUrl(): string
     {
-        return $query->where('status', 'paid');
+        return route('marketplace.track', $this->tracking_token);
     }
 
-    public function scopePending($query)
+    public static function generateOrderNumber(): string
     {
-        return $query->where('status', 'pending');
-    }
+        $today = now()->format('Ymd');
+        $count = static::whereDate('created_at', today())->count() + 1;
 
-    public function scopePendingConfirmation($query)
-    {
-        return $query->where('status', 'pending_confirmation');
-    }
-
-    public function scopeConfirmed($query)
-    {
-        return $query->where('status', 'confirmed');
-    }
-
-    public function scopeRejected($query)
-    {
-        return $query->where('status', 'rejected');
-    }
-
-    public function getStatusBadgeAttribute()
-    {
-        $badges = [
-            'pending_confirmation' => ['class' => 'bg-yellow-100 text-yellow-800', 'text' => 'Menunggu Konfirmasi'],
-            'confirmed' => ['class' => 'bg-green-100 text-green-800', 'text' => 'Dikonfirmasi'],
-            'paid' => ['class' => 'bg-blue-100 text-blue-800', 'text' => 'Lunas'],
-            'rejected' => ['class' => 'bg-red-100 text-red-800', 'text' => 'Ditolak'],
-            'pending' => ['class' => 'bg-gray-100 text-gray-800', 'text' => 'Pending'],
-        ];
-
-        return $badges[$this->status] ?? ['class' => 'bg-gray-100 text-gray-800', 'text' => ucfirst($this->status)];
-    }
-
-    public function canBeConfirmed()
-    {
-        return $this->status === 'pending_confirmation';
-    }
-
-    public function canBeRejected()
-    {
-        return in_array($this->status, ['pending_confirmation', 'confirmed']);
+        return 'HIMTI-' . $today . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 }

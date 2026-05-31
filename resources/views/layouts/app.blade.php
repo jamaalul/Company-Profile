@@ -11,7 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="{{ asset('css/common.css') }}" rel="stylesheet">
-    {{-- <link rel="stylesheet" href="{{ asset('css/animations.css') }}"> --}}
+    {{--
+    <link rel="stylesheet" href="{{ asset('css/animations.css') }}"> --}}
     <link rel="stylesheet" href="{{ asset('css/global.css') }}">
 </head>
 

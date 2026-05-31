@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -12,91 +13,46 @@ class Product extends Model
 
     protected $fillable = [
         'name',
-        'slug',
         'description',
+        'image_path',
         'price',
         'stock',
-        'sku',
-        'images',
-        'specifications',
-        'status',
-        'is_featured',
-        'link',
+        'is_active',
+        'is_preorder',
+    ];
+
+    protected $attributes = [
+        'stock' => 0,
+        'is_active' => true,
+        'is_preorder' => false,
     ];
 
     protected function casts(): array
     {
         return [
             'price' => 'decimal:2',
-            'images' => 'array',
-            'specifications' => 'array',
-            'is_featured' => 'boolean',
-            'stock' => 'integer',
-            'link' => 'string',
+            'is_active' => 'boolean',
+            'is_preorder' => 'boolean',
         ];
     }
 
-    protected static function boot()
+    public function fields(): HasMany
     {
-        parent::boot();
-        
-        static::creating(function ($product) {
-            if (empty($product->slug)) {
-                $product->slug = Str::slug($product->name);
-            }
-            if (empty($product->sku)) {
-                $product->sku = 'HIMTI-' . strtoupper(Str::random(8));
-            }
-        });
-
-        static::updating(function ($product) {
-            if ($product->isDirty('name')) {
-                $product->slug = Str::slug($product->name);
-            }
-        });
+        return $this->hasMany(ProductField::class)->orderBy('sort_order');
     }
 
-    public function orderItems()
+    public function bundles(): BelongsToMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->belongsToMany(Bundle::class, 'bundle_items')
+            ->withPivot('quantity');
     }
 
     public function scopeActive($query)
     {
-        return $query->where('status', 'active');
-    }
-
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', true);
-    }
-
-    public function scopeInStock($query)
-    {
-        return $query->where('stock', '>', 0);
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
-    public function getFeaturedImageAttribute()
-    {
-        return $this->images[0] ?? null;
-    }
-
-    public function isInStock()
-    {
-        return $this->stock > 0;
-    }
-
-    public function decreaseStock($quantity)
-    {
-        if ($this->stock >= $quantity) {
-            $this->decrement('stock', $quantity);
-            return true;
-        }
-        return false;
+        return $query->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('stock', '>', 0)
+                  ->orWhere('is_preorder', true);
+            });
     }
 }

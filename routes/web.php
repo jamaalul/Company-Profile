@@ -9,11 +9,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MarketplaceController;
-use App\Http\Controllers\SubDepartmentController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
-use App\Http\Controllers\Admin\ProductController as AdminProductController;
 
 Route::middleware('guest')->group(function () {
     // Login
@@ -50,10 +45,14 @@ Route::prefix('portal')->name('portal.')->group(function () {
 
 // Marketplace Routes
 Route::prefix('marketplace')->name('marketplace.')->group(function () {
-    Route::get('/', [MarketplaceController::class, 'index'])->name('index');
+    Route::get('/', [MarketplaceController::class, 'index'])->name('index')->middleware('throttle:60,1');
+    Route::get('/track/{token}', [MarketplaceController::class, 'track'])->name('track')->middleware('throttle:30,1');
     Route::get('/{product}', [MarketplaceController::class, 'show'])->name('show');
     Route::get('/{product}/purchase', [MarketplaceController::class, 'purchaseForm'])->name('purchase.form');
-    Route::post('/{product}/purchase', [MarketplaceController::class, 'purchase'])->name('purchase');
+    Route::post('/purchase', [MarketplaceController::class, 'purchase'])->name('purchase');
+    Route::get('/bundle/{bundle}', [MarketplaceController::class, 'showBundle'])->name('bundle.show');
+    Route::get('/bundle/{bundle}/purchase', [MarketplaceController::class, 'purchaseBundleForm'])->name('bundle.purchase.form');
+    Route::post('/bundle/purchase', [MarketplaceController::class, 'purchaseBundle'])->name('bundle.purchase');
     Route::get('/order-success/{orderNumber}', [MarketplaceController::class, 'orderSuccess'])->name('order.success');
 });
 
@@ -79,34 +78,7 @@ Route::get('/coming', function () {
 // Auth Routes
 // require __DIR__.'/auth.php';
 
-// Admin Routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    
-    // News Management
-    Route::resource('news', AdminNewsController::class);
-    
-    // Product Management
-    Route::resource('products', AdminProductController::class);
-
-    Route::resource('departments', DepartmentController::class);
-    Route::resource('sub-departments', SubDepartmentController::class)->shallow();
-    
-    // Order Management
-    // Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
-    // Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-    // Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
-
-    Route::prefix('orders')->name('orders.')->group(function () {
-        Route::get('/', [AdminOrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [AdminOrderController::class, 'show'])->name('show');
-        Route::patch('/{order}/confirm', [AdminOrderController::class, 'confirm'])->name('confirm');
-        Route::patch('/{order}/reject', [AdminOrderController::class, 'reject'])->name('reject');
-        Route::patch('/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('update-status');
-        Route::delete('/{order}', [AdminOrderController::class, 'destroy'])->name('destroy');
-    });
-});
+// Admin routes have been removed
 
 // Route::fallback(function () {
 //     return view('coming-soon');

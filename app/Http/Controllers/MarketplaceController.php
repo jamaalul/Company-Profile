@@ -3,140 +3,226 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Bundle;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderItemFieldValue;
+use App\Http\Requests\CheckoutRequest;
+use App\Enums\OrderStatus;
+use App\Mail\OrderCreatedMail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class MarketplaceController extends Controller
 {
     public function index()
     {
-        $featuredProducts = Product::active()
-            ->featured()
-            ->inStock()
-            ->take(4)
-            ->get();
-
-        $products = Product::active()
-            ->inStock()
-            ->latest()
-            ->paginate(12);
-
-        return view('marketplace.index', compact('featuredProducts', 'products'));
+        $products = Product::active()->latest()->get();
+        $bundles = Bundle::with('products')->active()->latest()->get();
+        return view('marketplace.index', compact('products', 'bundles'));
     }
 
     public function show(Product $product)
     {
-        if ($product->status !== 'active') {
+        if (!$product->is_active || $product->stock <= 0) {
             abort(404);
         }
-
-        $relatedProducts = Product::active()
-            ->inStock()
-            ->where('id', '!=', $product->id)
-            ->inRandomOrder()
-            ->take(4)
-            ->get();
-
-        return view('marketplace.show', compact('product', 'relatedProducts'));
+        return view('marketplace.show', compact('product'));
     }
 
     public function purchaseForm(Product $product)
     {
-        if ($product->status !== 'active' || !$product->isInStock()) {
+        if (!$product->is_active || $product->stock <= 0) {
             abort(404);
         }
-
+        $product->load('fields');
         return view('marketplace.purchase', compact('product'));
     }
 
-    public function purchase(Request $request, Product $product)
-    {     
+    public function purchase(CheckoutRequest $request)
+    {
+        $validated = $request->validated();
+        $validated['quantity'] = 1;
+        $product = Product::findOrFail($validated['product_id']);
 
-        $validator = Validator::make($request->all(), [
-            'customer_name' => 'required|string|max:255',
-            'angkatan' => 'required|string|max:10',
-            'bidang' => 'required|in:HIMTI (non hima),Alumni,Medinfo,Pendidikan,Pengmas,Perhubungan,PSDM,Ekraf',
-            'customer_phone' => 'required|string|max:20',
-            'customer_address' => 'required|string',
-            'size' => 'required|in:XS,S,M,L,XL,XXL,3XL',
-            'payment_method' => 'required|in:cash,qris',
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ], [
-            'customer_name.required' => 'Nama lengkap wajib diisi',
-            'angkatan.required' => 'Angkatan wajib diisi',
-            'bidang.required' => 'Bidang wajib dipilih',
-            'bidang.in' => 'Bidang yang dipilih tidak valid',
-            'customer_phone.required' => 'Nomor telepon wajib diisi',
-            'customer_address.required' => 'Alamat wajib diisi',
-            'size.required' => 'Size wajib dipilih',
-            'payment_method.required' => 'Metode pembayaran wajib dipilih',
-            'payment_proof.required' => 'Bukti pembayaran wajib diupload',
-            'payment_proof.image' => 'File harus berupa gambar',
-            'payment_proof.mimes' => 'Format gambar harus JPEG, PNG, atau JPG',
-            'payment_proof.max' => 'Ukuran file tidak boleh lebih dari 2MB',
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withErrors($validator)->withInput();
+        if (!$product->is_active || $product->stock < $validated['quantity']) {
+            return back()->withInput()->with('error', 'Produk tidak tersedia atau stok tidak cukup.');
         }
 
-        // Check stock availability
-        if ($product->stock < $request->quantity) {
-            return back()->withErrors(['quantity' => 'Stock tidak mencukupi'])->withInput();
-        }
-
-        $quantity = $request->quantity;
-        $totalAmount = $product->price * $quantity;
-
-        // Handle payment proof upload
+        // Handle file upload
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
-            $file = $request->file('payment_proof');
-            $fileName = time() . '_payment_proof_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            
-            // Store in public/storage/payment_proofs via Laravel's public disk
-            $paymentProofPath = $file->storeAs('payment_proofs', $fileName, 'public');
-            
-            // Verify file was stored correctly
-            if (!Storage::disk('public')->exists($paymentProofPath)) {
-                return back()->withErrors(['payment_proof' => 'Gagal menyimpan bukti pembayaran'])->withInput();
+            $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+        }
+
+        // Calculate total
+        $totalPrice = $product->price * $validated['quantity'];
+
+        $order = Order::create([
+            'order_number' => Order::generateOrderNumber(),
+            'tracking_token' => Str::uuid()->toString(),
+            'buyer_name' => strip_tags($validated['customer_name']),
+            'buyer_email' => strip_tags($validated['customer_email']),
+            'buyer_whatsapp' => strip_tags($validated['customer_phone']),
+            'total_price' => $totalPrice,
+            'status' => OrderStatus::PendingApproval, // Usually PendingPayment, but we collect proof upfront
+            'payment_proof_path' => $paymentProofPath,
+        ]);
+
+        $orderItem = OrderItem::create([
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'orderable_type' => 'product',
+            'quantity' => $validated['quantity'],
+            'unit_price' => $product->price,
+        ]);
+
+        // Decrement stock
+        $product->decrement('stock', $validated['quantity']);
+
+        // Let's create dummy ProductField records for the product if they don't exist
+        // to map these answers, or just store them differently. 
+        // We'll create the field values based on dynamic fields if they exist.
+        
+        foreach ($product->fields as $field) {
+            $fieldName = 'field_' . $field->id;
+            if ($request->has($fieldName) || $request->hasFile($fieldName)) {
+                $value = $request->input($fieldName);
+                $filePath = null;
+                
+                if ($field->field_type === 'file' && $request->hasFile($fieldName)) {
+                    $filePath = $request->file($fieldName)->store('order_files', 'public');
+                    $value = null;
+                }
+
+                OrderItemFieldValue::create([
+                    'order_item_id' => $orderItem->id,
+                    'product_field_id' => $field->id,
+                    'value' => $value,
+                    'file_path' => $filePath,
+                ]);
             }
         }
 
-        // Create order
-        $order = Order::create([
-            'order_number' => 'ORD-' . strtoupper(uniqid()),
-            'customer_name' => $request->customer_name,
-            'customer_email' => $request->customer_email ?? '',
-            'customer_phone' => $request->customer_phone,
-            'customer_address' => $request->customer_address,
-            'angkatan' => $request->angkatan,
-            'bidang' => $request->bidang,
-            'size' => $request->size,
-            'payment_method' => $request->payment_method,
-            'payment_proof' => $paymentProofPath,
-            'total_amount' => $product->price, // Karena quantity dihapus, jadi hanya price saja
-            'status' => 'pending_confirmation',
-        ]);
+        // Mail
+        // Mail::to($order->buyer_email)->send(new OrderCreatedMail($order)); // Skip since no email in form
 
-        // Create order item
-        OrderItem::create([
-            'order_id' => $order->id,
-            'product_id' => $product->id,
-            'quantity' => 1, // Fixed quantity 1
-            'price' => $product->price,
-        ]);
-
-        return redirect()->route('marketplace.order.success', $order->order_number)
-            ->with('success', 'Pesanan berhasil dikirim! Tunggu konfirmasi dari admin.');
+        return redirect()->route('marketplace.order.success', $order->order_number);
     }
 
     public function orderSuccess($orderNumber)
     {
         $order = Order::where('order_number', $orderNumber)->firstOrFail();
         return view('marketplace.order-success', compact('order'));
+    }
+
+    public function showBundle(Bundle $bundle)
+    {
+        if (!$bundle->is_active) {
+            abort(404);
+        }
+        $bundle->load('products');
+        return view('marketplace.show-bundle', compact('bundle'));
+    }
+
+    public function purchaseBundleForm(Bundle $bundle)
+    {
+        if (!$bundle->is_active) {
+            abort(404);
+        }
+        $bundle->load(['products' => function ($query) {
+            $query->with('fields');
+        }]);
+        
+        foreach ($bundle->products as $product) {
+            if ($product->stock < $product->pivot->quantity) {
+                return redirect()->route('marketplace.index')->with('error', 'Salah satu produk dalam bundle ini sedang habis.');
+            }
+        }
+
+        return view('marketplace.purchase-bundle', compact('bundle'));
+    }
+
+    public function purchaseBundle(\App\Http\Requests\BundleCheckoutRequest $request)
+    {
+        $validated = $request->validated();
+        $validated['quantity'] = 1; // Force quantity to 1
+        
+        $bundle = Bundle::with('products.fields')->findOrFail($validated['bundle_id']);
+
+        if (!$bundle->is_active) {
+            return back()->withInput()->with('error', 'Bundle tidak tersedia.');
+        }
+
+        foreach ($bundle->products as $product) {
+            $requiredQuantity = $product->pivot->quantity * $validated['quantity'];
+            if ($product->stock < $requiredQuantity) {
+                return back()->withInput()->with('error', 'Stok untuk produk ' . $product->name . ' tidak mencukupi.');
+            }
+        }
+
+        $paymentProofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
+        }
+
+        $totalPrice = $bundle->special_price * $validated['quantity'];
+
+        $order = Order::create([
+            'order_number' => Order::generateOrderNumber(),
+            'tracking_token' => Str::uuid()->toString(),
+            'buyer_name' => strip_tags($validated['customer_name']),
+            'buyer_email' => strip_tags($validated['customer_email']),
+            'buyer_whatsapp' => strip_tags($validated['customer_phone']),
+            'total_price' => $totalPrice,
+            'status' => OrderStatus::PendingApproval,
+            'payment_proof_path' => $paymentProofPath,
+        ]);
+
+        $orderItem = OrderItem::create([
+            'order_id' => $order->id,
+            'bundle_id' => $bundle->id,
+            'orderable_type' => 'bundle',
+            'quantity' => $validated['quantity'],
+            'unit_price' => $bundle->special_price,
+        ]);
+
+        foreach ($bundle->products as $product) {
+            $requiredQuantity = $product->pivot->quantity * $validated['quantity'];
+            $product->decrement('stock', $requiredQuantity);
+
+            $fieldsData = $request->input('fields.' . $product->id, []);
+            for ($copy = 0; $copy < $product->pivot->quantity; $copy++) {
+                foreach ($product->fields as $field) {
+                    $value = $fieldsData[$copy][$field->id] ?? null;
+                    $filePath = null;
+
+                    if ($field->field_type === 'file' && $request->hasFile("fields.{$product->id}.{$copy}.{$field->id}")) {
+                        $filePath = $request->file("fields.{$product->id}.{$copy}.{$field->id}")->store('order_files', 'public');
+                        $value = null;
+                    }
+
+                    if ($value !== null || $filePath !== null) {
+                        OrderItemFieldValue::create([
+                            'order_item_id' => $orderItem->id,
+                            'product_field_id' => $field->id,
+                            'value' => $value,
+                            'file_path' => $filePath,
+                            'copy_index' => $copy,
+                        ]);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('marketplace.order.success', $order->order_number);
+    }
+
+    
+    public function track($token)
+    {
+        $order = Order::with('items')->where('tracking_token', $token)->firstOrFail();
+        return view('marketplace.tracking', compact('order'));
     }
 }
