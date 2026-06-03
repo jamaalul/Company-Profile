@@ -15,7 +15,6 @@ body {
 .hero .left {
     height: 100%;
     width: 100%;
-    background-image: url("../assets/logo_kabinet_transparan.png");
     background-size: auto 99%;
     background-repeat: no-repeat;
     background-position-x: -40vw;
@@ -57,7 +56,6 @@ body {
 .hero .right {
     height: 100%;
     width: 100%;
-    background-image: url("../images/compro/compro_img1.png");
     background-size: auto 70%;
     background-repeat: no-repeat;
     background-position-x: right;
@@ -422,7 +420,8 @@ body {
 }
 
 /* High DPI Displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
     .vision-title .main-title {
         text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     }
@@ -434,6 +433,7 @@ body {
 
 /* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
+
     .vision-section::before,
     .vision-section::after {
         transition: none;
@@ -660,7 +660,8 @@ body {
 }
 
 /* High DPI Displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
     .mission-title .main-title {
         text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
     }
