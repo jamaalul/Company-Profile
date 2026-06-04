@@ -208,11 +208,11 @@
             {{-- Big Card --}}
             <a href="{{ route('news.show', $firstNews->slug) }}" class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl h-[32rem] overflow-hidden">
                 @if($firstNews->featured_image)
-                    <img src="{{ Str::startsWith($firstNews->featured_image, 'http') ? $firstNews->featured_image : Storage::url($firstNews->featured_image) }}" alt="{{ $firstNews->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    <img src="{{ Str::startsWith($firstNews->featured_image, 'http') ? $firstNews->featured_image : Storage::url($firstNews->featured_image) }}" alt="{{ $firstNews->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                 @else
-                    <div class="absolute inset-0 w-full h-full bg-red-500 transition-transform duration-700 group-hover:scale-105"></div>
+                    <div class="absolute inset-0 bg-red-500 w-full h-full group-hover:scale-105 transition-transform duration-700"></div>
                 @endif
-                <div class="relative z-10 flex flex-col gap-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 lg:p-8 h-full justify-end">
+                <div class="z-10 relative flex flex-col justify-end gap-4 p-4 lg:p-8 h-full" style="background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.45) 50%, transparent);">
                     <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
                         <p class="font-medium text-white text-xs">{{ $firstNews->type === 'public' ? 'Berita Publik' : ($firstNews->type === 'internal' ? 'Berita Internal' : 'Berita') }}</p>
                     </span>
@@ -221,10 +221,6 @@
                     <p class="text-white/80 text-sm line-clamp-2">
                         {{ $firstNews->excerpt }}
                     </p>
-                    <button
-                        class="mt-2 flex justify-center items-center gap-2 bg-white/10 group-hover:bg-white/20 group-hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all group-hover:-translate-y-1 duration-300 transform">
-                        Baca Sekarang
-                    </button>
                 </div>
             </a>
 
@@ -232,13 +228,13 @@
             @if($allNews->count() > 1)
             <div class="gap-4 grid {{ $allNews->count() > 2 ? 'grid-rows-2' : 'grid-rows-1' }} h-[32rem]">
                 @foreach($allNews->skip(1) as $news)
-                <a href="{{ route('news.show', $news->slug) }}" class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl overflow-hidden h-full">
+                <a href="{{ route('news.show', $news->slug) }}" class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl h-full overflow-hidden">
                     @if($news->featured_image)
-                        <img src="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : Storage::url($news->featured_image) }}" alt="{{ $news->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        <img src="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : Storage::url($news->featured_image) }}" alt="{{ $news->title }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                     @else
-                        <div class="absolute inset-0 w-full h-full bg-red-500 transition-transform duration-700 group-hover:scale-105"></div>
+                        <div class="absolute inset-0 bg-red-500 w-full h-full group-hover:scale-105 transition-transform duration-700"></div>
                     @endif
-                    <div class="relative z-10 flex flex-col gap-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 lg:p-8 h-full justify-end">
+                    <div class="z-10 relative flex flex-col justify-end gap-2 p-4 lg:p-8 h-full" style="background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.45) 50%, transparent);">
                         <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
                             <p class="font-medium text-white text-xs">{{ $news->type === 'public' ? 'Berita Publik' : ($news->type === 'internal' ? 'Berita Internal' : 'Berita') }}</p>
                         </span>
@@ -246,10 +242,6 @@
                         <h3 class="font-semibold text-white text-xl line-clamp-2">
                             {{ $news->title }}
                         </h3>
-                        <button
-                            class="mt-2 flex justify-center items-center gap-2 bg-white/10 group-hover:bg-white/20 group-hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all group-hover:-translate-y-1 duration-300 transform">
-                            Baca Sekarang
-                        </button>
                     </div>
                 </a>
                 @endforeach
