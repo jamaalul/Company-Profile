@@ -13,10 +13,10 @@
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8" :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'">
             <a href="/" class="hover:text-blue-300 text-xl transition">Home</a>
-            <a href="/" class="hover:text-blue-300 text-xl transition">Tentang Kami</a>
-            <a href="/" class="hover:text-blue-300 text-xl transition">Departemen</a>
-            <a href="/" class="hover:text-blue-300 text-xl transition">Berita</a>
-            <a href="/" class="hover:text-blue-300 text-xl transition">HIMTI Store</a>
+            <a href="/about-us" class="hover:text-blue-300 text-xl transition">Tentang Kami</a>
+            <a href="/news" class="hover:text-blue-300 text-xl transition">Berita</a>
+            <a href="/portal" class="hover:text-blue-300 text-xl transition">Portal HIMTI</a>
+            <a href="/marketplace" class="hover:text-blue-300 text-xl transition">HIMTI Store</a>
 
             <!-- Dropdown for SOP -->
             <div class="relative" @click.away="sopOpen = false">
@@ -39,7 +39,7 @@
                     x-transition:leave-end="transform opacity-0 scale-95"
                     class="right-0 z-50 absolute bg-white shadow-lg mt-2 py-1 rounded-md w-48 text-gray-800">
                     <a href="#" class="block hover:bg-gray-100 px-4 py-2">Partnership</a>
-                    <a href="#" class="block hover:bg-gray-100 px-4 py-2">Media Partner</a>
+                    <a href="/sop/medinfo" class="block hover:bg-gray-100 px-4 py-2">Media Partner</a>
                 </div>
             </div>
         </div>
@@ -65,10 +65,10 @@
         x-transition:leave-end="opacity-0 -translate-y-full"
         class="md:hidden top-0 left-0 z-40 absolute flex flex-col justify-center items-center gap-6 bg-gray-900/95 backdrop-blur-lg w-full h-screen text-white text-2xl">
         <a href="/" class="hover:text-blue-400 transition" @click="open = false">Home</a>
-        <a href="/" class="hover:text-blue-400 transition" @click="open = false">Tentang Kami</a>
-        <a href="/" class="hover:text-blue-400 transition" @click="open = false">Departemen</a>
-        <a href="/" class="hover:text-blue-400 transition" @click="open = false">Berita</a>
-        <a href="/" class="hover:text-blue-400 transition" @click="open = false">HIMTI Store</a>
+        <a href="/about-us" class="hover:text-blue-400 transition" @click="open = false">Tentang Kami</a>
+        <a href="/news" class="hover:text-blue-400 transition" @click="open = false">Berita</a>
+        <a href="/portal" class="hover:text-blue-400 transition" @click="open = false">Portal HIMTI</a>
+        <a href="/marketplace" class="hover:text-blue-400 transition" @click="open = false">HIMTI Store</a>
 
         <!-- Mobile Dropdown for SOP -->
         <div class="flex flex-col items-center">
@@ -86,7 +86,7 @@
             <div x-show="sopOpen" style="display: none;"
                 class="flex flex-col items-center gap-4 mt-4 text-gray-300 text-xl">
                 <a href="#" class="hover:text-white transition" @click="open = false">Partnership</a>
-                <a href="#" class="hover:text-white transition" @click="open = false">Media Partner</a>
+                <a href="/sop/medinfo" class="hover:text-white transition" @click="open = false">Media Partner</a>
             </div>
         </div>
     </div>

@@ -3,6 +3,7 @@
 @section('title', 'HIMTI - Teknik Informatika')
 
 @section('content')
+    {{-- HERO SECTION --}}
     <section class="flex w-screen h-screen">
         <img src="{{ asset('images/compro/all-cabinet.webp') }}" alt="Foto kabinet aksentra"
             class="top-0 right-0 absolute w-screen h-full object-cover">
@@ -18,7 +19,7 @@
                     Mahasiswa<br>D4
                     Teknik Informatika</h1>
                 <div class="flex sm:flex-row flex-col justify-center md:justify-start gap-4 mt-8">
-                    <a
+                    <a href="#tentang-himti"
                         class="group flex justify-center items-center gap-2 bg-[#578FCE] hover:bg-[#4673A6] hover:shadow-lg px-6 py-3 rounded-lg font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
                         Jelajahi HIMTI
                         <span class="transition-transform group-hover:translate-x-1 duration-300">
@@ -29,7 +30,7 @@
                             </svg>
                         </span>
                     </a>
-                    <a
+                    <a href="/news"
                         class="flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -59,7 +60,9 @@
             </div>
         </div>
     </section>
-    <section
+
+    {{-- TENTANG HIMTI SECTION --}}
+    <section id="tentang-himti"
         class="flex lg:flex-row flex-col gap-12 lg:gap-32 bg-white px-6 sm:px-10 lg:px-16 py-18 lg:py-32 w-screen overflow-x-hidden">
         <div class="flex flex-col gap-10">
             <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
@@ -75,7 +78,8 @@
                 Kabinet Aksentra hadir dengan semangat sinergi dan identitas dalam setiap karya menjadi motor penggerak
                 inovasi dan kolaborasi di lingkungan kampus maupun luar kampus.
             </p>
-            <a href="" class="px-6 py-3 border-3 border-blue-300 rounded-lg w-fit font-medium text-blue-400 text-sm">
+            <a href="/about-us"
+                class="inline-block bg-transparent hover:bg-blue-300 hover:shadow-md px-6 py-3 border-2 border-blue-300 rounded-lg w-fit font-medium text-blue-400 hover:text-white text-sm transition-all hover:-translate-y-1 duration-300">
                 Selengkapnya
             </a>
         </div>
@@ -84,7 +88,7 @@
             <img src="{{ asset('images/compro/kadep-kadep.webp') }}" alt="Ketua-ketua departemen"
                 class="w-full object-bottom object-contain">
             <div
-                class="gap-2 grid grid-cols-1 lg:grid-cols-3 grid-rows-3 lg:grid-rows-1 bg-gradient-to-b from-black/20 shadow-sm backdrop-blur-sm p-2 border border-white/28 rounded-2xl w-full h-fit to white/20">
+                class="gap-2 grid grid-cols-1 lg:grid-cols-3 grid-rows-3 lg:grid-rows-1 bg-gradient-to-b from-black/20 to-white/20 shadow-sm backdrop-blur-sm p-2 border border-white/28 rounded-2xl w-full h-fit">
                 <div class="flex flex-col justify-center gap-1 bg-white p-3 rounded-xl h-20">
                     <strong class="font-bold text-lg">106 Anggota</strong>
                     <p class="flex items-center gap-1 text-gray-600 text-xs lg:text-sm">
@@ -127,6 +131,8 @@
             </div>
         </div>
     </section>
+
+    {{-- DEPARTEMEN SECTION --}}
     <section
         class="relative flex flex-col justify-center lg:items-center gap-6 bg-cover bg-no-repeat px-6 sm:px-10 lg:px-16 py-44 lg:py-6 w-screen aspect-[1440/800]"
         style="background-image: url('{{ asset('images/compro/mesh.webp') }}');">
@@ -136,7 +142,8 @@
             memiliki
             tugas dan fungsi untuk menjalankan organisasi secara optimal.
         </p>
-        <a href="" class="px-6 py-3 border-3 border-white rounded-lg w-fit font-medium text-white text-sm">
+        <a href="/about-us"
+            class="hover:bg-white hover:shadow-md px-6 py-3 border-3 border-white rounded-lg w-fit font-medium text-white hover:text-blue-400 text-sm transition-all hover:-translate-y-1 duration-300">
             Selengkapnya
         </a>
         <div class="gap-2 lg:gap-4 grid grid-cols-1 lg:grid-cols-4 mt-8 w-full max-w-6xl">
@@ -182,71 +189,77 @@
             </div>
         </div>
     </section>
+
+    @if($allNews->isNotEmpty())
+    {{-- BERITA SECTION --}}
     <section class="flex flex-col gap-6 bg-white p-6 sm:p-10 lg:p-16 w-screen">
         <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
             <p class="font-medium text-white text-xs">BERITA</p>
         </span>
         <div class="flex lg:flex-row flex-col justify-between gap-4">
             <h2 class="font-bold text-4xl lg:5xl">Kegiatan & Berita HIMTI</h2>
-            <a href="" class="px-6 py-3 border-3 border-blue-300 rounded-lg w-fit h-fit font-medium text-blue-300 text-sm">
+            <a href="/news"
+                class="hover:bg-blue-300 hover:shadow-md px-6 py-3 border-3 border-blue-300 rounded-lg w-fit h-fit font-medium text-blue-300 hover:text-white text-sm transition-all hover:-translate-y-1 duration-300">
                 Selengkapnya
             </a>
         </div>
-        <div class="gap-4 grid grid-cols-1 lg:grid-cols-2 grid-rows-2 lg:grid-rows-1">
-            <div class="flex flex-col justify-end bg-red-500 rounded-2xl h-[32rem] overflow-hidden">
-                <div class="flex flex-col gap-4 bg-gradient-to-b from-transparent to-black/30 p-4 lg:p-8">
+        <div class="gap-4 grid grid-cols-1 {{ $allNews->count() > 1 ? 'lg:grid-cols-2 grid-rows-2' : 'grid-rows-1' }} lg:grid-rows-1">
+            @php $firstNews = $allNews->first(); @endphp
+            {{-- Big Card --}}
+            <a href="{{ route('news.show', $firstNews->slug) }}" class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl h-[32rem] overflow-hidden">
+                @if($firstNews->featured_image)
+                    <img src="{{ Str::startsWith($firstNews->featured_image, 'http') ? $firstNews->featured_image : Storage::url($firstNews->featured_image) }}" alt="{{ $firstNews->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                @else
+                    <div class="absolute inset-0 w-full h-full bg-red-500 transition-transform duration-700 group-hover:scale-105"></div>
+                @endif
+                <div class="relative z-10 flex flex-col gap-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 lg:p-8 h-full justify-end">
                     <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
-                        <p class="font-medium text-white text-xs">Program Kerja</p>
+                        <p class="font-medium text-white text-xs">{{ $firstNews->type === 'public' ? 'Berita Publik' : ($firstNews->type === 'internal' ? 'Berita Internal' : 'Berita') }}</p>
                     </span>
-                    <p class="text-white text-sm">12 Mei 2026</p>
-                    <h3 class="font-semibold text-white text-2xl lg:text-3xl">Work Relation Program 2025: Membangun Jejaring
-                        Profesional
-                    </h3>
-                    <p class="text-white/60 text-sm">
-                        Program kolaborasi antara HIMTI dan industri teknologi untuk membuka kesempatan magang dan
-                        networking
-                        bagi seluruh anggota.
+                    <p class="text-white text-sm">{{ $firstNews->published_at ? $firstNews->published_at->translatedFormat('d F Y') : '' }}</p>
+                    <h3 class="font-semibold text-white text-2xl lg:text-3xl">{{ $firstNews->title }}</h3>
+                    <p class="text-white/80 text-sm line-clamp-2">
+                        {{ $firstNews->excerpt }}
                     </p>
                     <button
-                        class="flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
+                        class="mt-2 flex justify-center items-center gap-2 bg-white/10 group-hover:bg-white/20 group-hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all group-hover:-translate-y-1 duration-300 transform">
                         Baca Sekarang
                     </button>
                 </div>
-            </div>
-            <div class="gap-4 grid grid-rows-2 h-[32rem]">
-                <div class="flex flex-col justify-end bg-red-500 rounded-2xl overflow-hidden">
-                    <div class="flex flex-col gap-2 bg-gradient-to-b from-transparent to-black/30 p-4 lg:p-8">
+            </a>
+
+            {{-- Small Cards Container --}}
+            @if($allNews->count() > 1)
+            <div class="gap-4 grid {{ $allNews->count() > 2 ? 'grid-rows-2' : 'grid-rows-1' }} h-[32rem]">
+                @foreach($allNews->skip(1) as $news)
+                <a href="{{ route('news.show', $news->slug) }}" class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl overflow-hidden h-full">
+                    @if($news->featured_image)
+                        <img src="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : Storage::url($news->featured_image) }}" alt="{{ $news->title }}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                    @else
+                        <div class="absolute inset-0 w-full h-full bg-red-500 transition-transform duration-700 group-hover:scale-105"></div>
+                    @endif
+                    <div class="relative z-10 flex flex-col gap-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 lg:p-8 h-full justify-end">
                         <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
-                            <p class="font-medium text-white text-xs">Program Kerja</p>
+                            <p class="font-medium text-white text-xs">{{ $news->type === 'public' ? 'Berita Publik' : ($news->type === 'internal' ? 'Berita Internal' : 'Berita') }}</p>
                         </span>
-                        <p class="text-white text-sm">12 Mei 2026</p>
-                        <h3 class="font-semibold text-white text-xl">
-                            Work Relation Program 2025: Membangun Jejaring Profesional
+                        <p class="text-white text-sm">{{ $news->published_at ? $news->published_at->translatedFormat('d F Y') : '' }}</p>
+                        <h3 class="font-semibold text-white text-xl line-clamp-2">
+                            {{ $news->title }}
                         </h3>
                         <button
-                            class="flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
+                            class="mt-2 flex justify-center items-center gap-2 bg-white/10 group-hover:bg-white/20 group-hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all group-hover:-translate-y-1 duration-300 transform">
                             Baca Sekarang
                         </button>
                     </div>
-                </div>
-                <div class="flex flex-col justify-end bg-red-500 rounded-2xl overflow-hidden">
-                    <div class="flex flex-col gap-2 bg-gradient-to-b from-transparent to-black/30 p-4 lg:p-8">
-                        <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
-                            <p class="font-medium text-white text-xs">Program Kerja</p>
-                        </span>
-                        <p class="text-white text-sm">12 Mei 2026</p>
-                        <h3 class="font-semibold text-white text-xl">
-                            Work Relation Program 2025: Membangun Jejaring Profesional
-                        </h3>
-                        <button
-                            class="flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 hover:shadow-lg backdrop-blur-sm px-6 py-3 border border-white/28 rounded-lg w-fit font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
-                            Baca Sekarang
-                        </button>
-                    </div>
-                </div>
+                </a>
+                @endforeach
             </div>
+            @endif
         </div>
     </section>
+    @endif
+
+    {{-- STORE SECTION --}}
     <section class="flex flex-col gap-6 bg-[#D9EAF7]/50 p-6 sm:p-10 lg:p-16 w-screen">
         <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
             <p class="font-medium text-white text-xs">OFFICIAL STORE</p>
@@ -261,7 +274,7 @@
                         Tunjukkan identitasmu sebagai bagian dari HIMTI lewat merchandise eksklusif kami.
                         Untuk kamu yang bangga menjadi bagian dari HIMTI.
                     </p>
-                    <a href=""
+                    <a href="/marketplace"
                         class="flex justify-center items-center gap-2 bg-white/10 hover:bg-white/20 hover:shadow-lg backdrop-blur-sm mt-2 px-6 py-3 border border-white/28 rounded-full w-fit font-medium text-white text-sm transition-all hover:-translate-y-1 duration-300 transform">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -281,7 +294,7 @@
                 Tunjukkan identitasmu sebagai bagian dari HIMTI lewat merchandise eksklusif kami.
                 Untuk kamu yang bangga menjadi bagian dari HIMTI.
             </p>
-            <a href=""
+            <a href="/marketplace"
                 class="flex justify-center items-center gap-2 bg-blue-300 mt-2 px-4 lg:px-6 py-2 lg:py-3 rounded-full w-fit font-medium text-white text-xs">
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -295,6 +308,8 @@
             </a>
         </div>
     </section>
+
+    {{-- KOLABORASI SECTION --}}
     <section class="flex flex-col justify-center lg:items-center gap-6 bg-[#f4f4f4] p-6 sm:p-10 lg:p-16 w-screen">
         <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
             <p class="font-medium text-white text-xs">KOLABORASI</p>
@@ -336,7 +351,7 @@
                     Prosedur kolaborasi publikasi media sosial HIMTI UNAIR.
                 </p>
                 <div class="flex flex-col gap-2 w-full">
-                    <a href=""
+                    <a href="/sop/medinfo"
                         class="flex justify-center items-center gap-2 bg-black/10 hover:bg-black/20 hover:shadow-md backdrop-blur-sm px-4 lg:px-6 py-2 lg:py-3 border border-white/28 rounded-full w-full font-medium text-white transition-all hover:-translate-y-1 duration-300 transform">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                             <path fill-rule="evenodd"

@@ -22,9 +22,15 @@ class HomeController extends Controller
                 return $query->where('id', '!=', $featuredNews->id);
             })
             ->latest('published_at')
-            ->take(6)
+            ->take(2)
             ->get();
 
-        return view('compro', compact('featuredNews', 'latestNews'));
+        $allNews = collect([$featuredNews])
+            ->filter()
+            ->merge($latestNews)
+            ->unique('id')
+            ->take(3);
+
+        return view('compro', compact('allNews'));
     }
 }
