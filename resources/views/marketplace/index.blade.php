@@ -1,154 +1,123 @@
-@extends('layouts.app')
+@extends('layouts.new-app')
 
 @section('title', 'HIMTI STORE - Teknik Informatika')
 
 @section('content')
+
+    {{-- SEARCH BAR SECTION --}}
     <section
-        class="relative flex justify-center items-end bg-cover bg-center px-5 pt-24 md:pt-0 pb-8 md:pb-0 h-fit md:min-h-[500px] overflow-x-hidden"
-        style="background-image: url('{{ asset('assets/bg-marketplace.png') }}');">
-        <div class="z-10 relative px-4 text-white text-center">
-
-            <!-- Desktop image -->
-            <div class="hidden md:block">
-                <img src="{{ asset('assets/asset_marketplace.png') }}" alt="HIMTI Store Desktop" class="mx-auto rounded-lg">
-            </div>
-
-            <!-- Mobile text -->
-            <div class="md:hidden block">
-                <h1 class="font-black text-[6rem] -translate-x-18">
-                    HIMTI
-                </h1>
-                <h2 class="font-bold text-5xl tracking-[0.2em] translate-x-8">
-                    STORE
-                </h2>
-            </div>
-
+        class="flex flex-col items-center bg-cover bg-no-repeat bg-center px-6 sm:px-10 lg:px-16 pt-24 lg:pt-28 pb-6 sm:pb-6 lg:pb-8 w-screen"
+        style="background-image: url('{{ asset('images/about/mesh.webp') }}');">
+        <div class="flex lg:flex-row flex-col items-center gap-6 pt-8 w-full max-w-5xl">
+            <h1 class="hidden lg:block font-bold text-white text-4xl text-end">HIMTI<br>STORE</h1>
+            <h1 class="lg:hidden w-full font-bold text-white text-5xl text-center">HIMTI STORE</h1>
+            <form action="{{ route('marketplace.index') }}" method="GET" class="flex items-center bg-white p-[2px] rounded-2xl w-full h-10">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Produk" class="px-4 outline-none w-full h-full rounded-2xl text-black">
+                <button type="submit"
+                    class="flex justify-center items-center bg-blue-300 hover:bg-blue-400 rounded-[14px] h-full aspect-square text-white transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd"
+                            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </form>
         </div>
     </section>
 
-    {{-- =========================================================
-    CATALOG SECTION
-    ========================================================= --}}
-    <div class="flex flex-col items-center mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-screen-xl">
-
-        <h1 class="mb-8 pt-16 sm:pt-20 w-full font-bold text-blue-900 text-4xl md:text-5xl text-center tracking-tight">
-            CATALOG
-        </h1>
-
-        <div class="gap-3 md:gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 pb-16 w-full">
-
-            @foreach($bundles as $bundle)
-                <a href="{{ route('marketplace.bundle.show', $bundle->id) }}" class="group block h-full">
-                    <div
-                        class="flex flex-col bg-white shadow-sm border border-gray-100 hover:border-gray-200 rounded-2xl h-full overflow-hidden transition-all hover:-translate-y-1 duration-300">
-
-                        {{-- Bundle image --}}
-                        <div class="relative bg-blue-50 aspect-square overflow-hidden shrink-0">
-                            @if($bundle->image_path)
-                                <img src="{{ asset('storage/' . $bundle->image_path) }}" alt="{{ $bundle->name }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            @else
-                                <img src="/placeholder.svg?height=200&width=300" alt="{{ $bundle->name }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            @endif
-
-                            <div class="top-2 right-2 absolute flex flex-col items-end gap-1">
-                                <span
-                                    class="bg-blue-600 shadow-sm px-2 py-0.5 rounded-full font-bold text-[10px] text-white sm:text-xs tracking-wider">
-                                    BUNDLE
-                                </span>
-                                @if($bundle->products->contains('is_preorder', true))
-                                    <span
-                                        class="bg-orange-500 shadow-sm px-2 py-0.5 rounded-full font-bold text-[10px] text-white sm:text-xs tracking-wider">
-                                        PRE-ORDER
-                                    </span>
-                                @endif
-                            </div>
+    {{-- BUNDLE SECTION --}}
+    <section class="flex flex-col items-center p-6 sm:p-10 lg:p-16 w-screen">
+        <div class="flex flex-col gap-4 bg-zinc-100 p-4 rounded-2xl w-full max-w-5xl">
+            <h3 class="flex items-center gap-4 font-bold text-[#578FCE] text-3xl">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path
+                        d="M9.375 3a1.875 1.875 0 0 0 0 3.75h1.875v4.5H3.375A1.875 1.875 0 0 1 1.5 9.375v-.75c0-1.036.84-1.875 1.875-1.875h3.193A3.375 3.375 0 0 1 12 2.753a3.375 3.375 0 0 1 5.432 3.997h3.943c1.035 0 1.875.84 1.875 1.875v.75c0 1.036-.84 1.875-1.875 1.875H12.75v-4.5h1.875a1.875 1.875 0 1 0-1.875-1.875V6.75h-1.5V4.875C11.25 3.839 10.41 3 9.375 3ZM11.25 12.75H3v6.75a2.25 2.25 0 0 0 2.25 2.25h6v-9ZM12.75 12.75v9h6.75a2.25 2.25 0 0 0 2.25-2.25v-6.75h-9Z" />
+                </svg>
+                Bundles
+            </h3>
+            <div class="gap-4 grid grid-cols-2 lg:grid-cols-4 w-full">
+                @forelse ($bundles as $bundle)
+                    <a href="{{ route('marketplace.bundle.show', $bundle->id) }}"
+                        class="bg-white hover:shadow-md rounded-xl w-full overflow-hidden transition-all hover:-translate-y-1">
+                        <div class="bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
+                            <img src="{{ Str::startsWith($bundle->image_path, 'http') ? $bundle->image_path : Storage::url($bundle->image_path) }}"
+                                alt="{{ $bundle->name }}" class="w-full h-full object-cover">
                         </div>
-
-                        {{-- Bundle info --}}
-                        <div class="flex flex-col flex-1 p-3 sm:p-4">
-                            <h2
-                                class="mb-1 font-bold text-blue-900 group-hover:text-blue-700 text-sm sm:text-base md:text-lg line-clamp-2 leading-snug transition-colors">
-                                {{ $bundle->name }}
-                            </h2>
-
-                            <p class="flex-1 mb-2 text-blue-700/60 text-xs sm:text-sm line-clamp-2 leading-relaxed">
-                                {{ Str::limit(strip_tags($bundle->description), 90) }}
-                            </p>
-
-                            <div class="flex items-center mt-auto pt-2 border-blue-100/60 border-t">
-                                <p class="font-bold text-blue-800 text-sm sm:text-base whitespace-nowrap">
-                                    Rp&nbsp;{{ number_format($bundle->special_price, 0, ',', '.') }}
+                        <div class="flex flex-col p-2 lg:p-4 h-40">
+                            <h4 class="overflow-ellipsis font-semibold text-lg line-clamp-2">{{ $bundle->name }}</h4>
+                            <p class="overflow-ellipsis text-xss text-zinc-600 line-clamp-2">{{ $bundle->description }}</p>
+                            <div class="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-1 mt-auto">
+                                <p class="items-end font-semibold text-[#578FCE] text-lg">Rp
+                                    {{ number_format($bundle->special_price, 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
-
-                    </div>
-                </a>
-            @endforeach
-
-            @forelse($products as $product)
-                <a href="{{ route('marketplace.show', $product->id) }}" class="group block h-full">
-                    <div
-                        class="flex flex-col bg-white shadow-sm border border-gray-100 hover:border-blue-200 rounded-2xl h-full overflow-hidden transition-all hover:-translate-y-1 duration-300">
-
-                        {{-- Product image --}}
-                        <div class="relative bg-gray-50 aspect-square overflow-hidden shrink-0">
-                            @if($product->image_path)
-                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            @else
-                                <img src="/placeholder.svg?height=200&width=300" alt="{{ $product->name }}"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            @endif
-
-                            @if($product->is_preorder)
-                                <span
-                                    class="top-2 right-2 absolute bg-orange-500 shadow-sm px-2 py-0.5 rounded-full font-bold text-[10px] text-white sm:text-xs tracking-wider">
-                                    PRE-ORDER
-                                </span>
-                            @endif
+                    </a>
+                @empty
+                    <div class="flex flex-col col-span-2 lg:col-span-4 items-center gap-4 py-16 text-center">
+                        <div class="flex justify-center items-center bg-zinc-200 rounded-full w-20 h-20">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-10 text-zinc-400">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                            </svg>
                         </div>
-
-                        {{-- Product info --}}
-                        <div class="flex flex-col flex-1 p-3 sm:p-4">
-                            <h2
-                                class="mb-1 font-bold text-gray-900 group-hover:text-blue-700 text-sm sm:text-base md:text-lg line-clamp-2 leading-snug transition-colors">
-                                {{ $product->name }}
-                            </h2>
-
-                            <p class="flex-1 mb-2 text-gray-500 text-xs sm:text-sm line-clamp-2 leading-relaxed">
-                                {{ Str::limit(strip_tags($product->description), 90) }}
-                            </p>
-
-                            <div
-                                class="flex flex-wrap justify-between items-center gap-1 mt-auto pt-2 border-gray-100 border-t">
-                                <p class="font-bold text-blue-800 text-sm sm:text-base whitespace-nowrap">
-                                    Rp&nbsp;{{ number_format($product->price, 0, ',', '.') }}
-                                </p>
-                                @if(!$product->is_preorder)
-                                    <span
-                                        class="bg-gray-100 px-2 py-0.5 rounded-md font-medium text-[10px] text-gray-500 sm:text-xs whitespace-nowrap">
-                                        Stok: {{ $product->stock }}
-                                    </span>
-                                @endif
-                            </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="font-semibold text-zinc-700 text-xl">Belum Ada Bundle</h3>
+                            <p class="max-w-sm text-zinc-500 text-sm">Saat ini belum ada bundle yang tersedia. Silakan cek kembali nanti.</p>
                         </div>
-
                     </div>
-                </a>
-            @empty
-                <div
-                    class="col-span-full bg-gray-50 py-16 border border-gray-200 border-dashed rounded-2xl text-gray-500 text-center">
-                    <svg class="mx-auto mb-3 w-12 h-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                        aria-hidden="true">
-                        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                    </svg>
-                    <p class="font-medium text-lg">Belum ada produk yang tersedia.</p>
-                </div>
-            @endforelse
+                @endforelse
+            </div>
         </div>
-    </div>
+        </div>
+    </section>
+
+    {{-- PRODUCT SECTION --}}
+    <section class="flex flex-col items-center p-6 sm:p-10 lg:p-16 w-screen">
+        <div class="flex flex-col gap-4 rounded-2xl w-full max-w-5xl">
+            <h3 class="flex items-center gap-4 font-bold text-[#578FCE] text-3xl">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path fill-rule="evenodd"
+                        d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 0 0 4.25 22.5h15.5a1.875 1.875 0 0 0 1.865-2.071l-1.263-12a1.875 1.875 0 0 0-1.865-1.679H16.5V6a4.5 4.5 0 1 0-9 0ZM12 3a3 3 0 0 0-3 3v.75h6V6a3 3 0 0 0-3-3Zm-3 8.25a3 3 0 1 0 6 0v-.75a.75.75 0 0 1 1.5 0v.75a4.5 4.5 0 1 1-9 0v-.75a.75.75 0 0 1 1.5 0v.75Z"
+                        clip-rule="evenodd" />
+                </svg>
+                Produk
+            </h3>
+            <div class="gap-4 grid grid-cols-2 lg:grid-cols-4 w-full">
+                @forelse ($products as $product)
+                    <a href="{{ route('marketplace.show', $product->id) }}"
+                        class="bg-white hover:shadow-sm rounded-xl w-full overflow-hidden transition-all hover:-translate-y-1">
+                        <div class="bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
+                            <img src="{{ Str::startsWith($product->image_path, 'http') ? $product->image_path : Storage::url($product->image_path) }}"
+                                alt="{{ $product->name }}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex flex-col p-2 lg:p-4 h-40">
+                            <h4 class="overflow-ellipsis font-semibold text-lg line-clamp-2">{{ $product->name }}</h4>
+                            <p class="overflow-ellipsis text-xss text-zinc-600 line-clamp-2">
+                                {{ strip_tags($product->description) }}
+                            </p>
+                            <div class="flex lg:flex-row flex-col lg:justify-between lg:items-center gap-1 mt-auto">
+                                <p class="items-end font-semibold text-[#578FCE] text-lg">Rp
+                                    {{ number_format($product->price, 0, ',', '.') }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                @empty
+                    <div class="flex flex-col col-span-2 lg:col-span-4 items-center gap-4 py-16 text-center">
+                        <div class="flex justify-center items-center bg-zinc-100 rounded-full w-20 h-20">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-10 text-zinc-400">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <h3 class="font-semibold text-zinc-700 text-xl">Belum Ada Produk</h3>
+                            <p class="max-w-sm text-zinc-500 text-sm">Saat ini belum ada produk yang tersedia. Silakan cek kembali nanti.</p>
+                        </div>
+                    </div>
+                @endforelse
+            </div>
+    </section>
 @endsection

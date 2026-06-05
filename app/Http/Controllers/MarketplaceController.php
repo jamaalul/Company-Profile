@@ -16,10 +16,21 @@ use Illuminate\Support\Facades\Mail;
 
 class MarketplaceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::active()->latest()->get();
-        $bundles = Bundle::with('products')->active()->latest()->get();
+        $search = $request->input('search');
+
+        $productsQuery = Product::active()->latest();
+        $bundlesQuery = Bundle::with('products')->active()->latest();
+
+        if ($search) {
+            $productsQuery->where('name', 'LIKE', '%' . $search . '%');
+            $bundlesQuery->where('name', 'LIKE', '%' . $search . '%');
+        }
+
+        $products = $productsQuery->get();
+        $bundles = $bundlesQuery->get();
+
         return view('marketplace.index', compact('products', 'bundles'));
     }
 
