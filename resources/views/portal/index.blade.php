@@ -2,41 +2,43 @@
 
 @section('content')
    <section
-      class="flex flex-col items-center bg-white-300 bg-cover bg-no-repeat bg-center px-6 sm:px-10 lg:px-16 pt-24 lg:pt-28 pb-6 sm:pb-10 lg:pb-16 w-screen"
+      class="flex flex-col items-center bg-white-300 bg-cover bg-no-repeat lg:bg-center px-6 sm:px-10 lg:px-16 pt-24 lg:pt-28 pb-6 sm:pb-10 lg:pb-16 w-screen"
       style="background-image: url('{{ asset('images/about/mesh.webp') }}');">
       <div class="flex flex-col items-center gap-6 w-full max-w-5xl">
          <h1 class="font-bold text-white text-5xl lg:text-6xl">PORTAL HIMTI</h1>
-         <p class="w-full text-white/60 text-lg text-center text-balance">
+         <p class="w-full text-white/80 text-lg text-center text-balance">
             Pusat informasi resmi Himpunan Mahasiswa D4 Teknik Informatika Universitas Airlangga. Lomba, beasiswa,
             workshop, dan peluang pengembangan diri, semua dalam satu tempat.
          </p>
-         <a href="{{ route('portal.show', $firstNews->slug) }}"
-            class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl h-[32rem] overflow-hidden">
-            @if($firstNews->featured_image)
-               <img
-                  src="{{ Str::startsWith($firstNews->featured_image, 'http') ? $firstNews->featured_image : Storage::url($firstNews->featured_image) }}"
-                  alt="{{ $firstNews->title }}"
-                  class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-            @else
-               <div class="absolute inset-0 bg-red-500 w-full h-full group-hover:scale-105 transition-transform duration-700">
-               </div>
-            @endif
-            <div class="z-10 relative flex flex-col justify-end gap-4 p-4 lg:p-8 h-full"
-               style="background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.45) 50%, transparent);">
-               <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
-                  <p class="font-medium text-white text-xs">
-                     {{ $firstNews->type === 'public' ? 'Berita Publik' : ($firstNews->type === 'internal' ? 'Informasi Internal' : 'Berita') }}
+         @if($firstNews)
+            <a href="{{ route('portal.show', $firstNews->slug) }}"
+               class="group relative flex flex-col justify-end bg-gray-200 rounded-2xl h-[32rem] overflow-hidden">
+               @if($firstNews->featured_image)
+                  <img
+                     src="{{ Str::startsWith($firstNews->featured_image, 'http') ? $firstNews->featured_image : Storage::url($firstNews->featured_image) }}"
+                     alt="{{ $firstNews->title }}"
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+               @else
+                  <div class="absolute inset-0 bg-red-500 w-full h-full group-hover:scale-105 transition-transform duration-700">
+                  </div>
+               @endif
+               <div class="z-10 relative flex flex-col justify-end gap-4 p-4 lg:p-8 h-full"
+                  style="background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.45) 50%, transparent);">
+                  <span class="bg-blue-300 px-4 py-2 rounded-full w-fit">
+                     <p class="font-medium text-white text-xs">
+                        {{ $firstNews->type === 'public' ? 'Berita Publik' : ($firstNews->type === 'internal' ? 'Informasi Internal' : 'Berita') }}
+                     </p>
+                  </span>
+                  <p class="text-white text-sm">
+                     {{ $firstNews->published_at ? $firstNews->published_at->translatedFormat('d F Y') : '' }}
                   </p>
-               </span>
-               <p class="text-white text-sm">
-                  {{ $firstNews->published_at ? $firstNews->published_at->translatedFormat('d F Y') : '' }}
-               </p>
-               <h3 class="font-semibold text-white text-2xl lg:text-3xl">{{ $firstNews->title }}</h3>
-               <p class="text-white/80 text-sm line-clamp-2">
-                  {{ $firstNews->excerpt }}
-               </p>
-            </div>
-         </a>
+                  <h3 class="font-semibold text-white text-2xl lg:text-3xl">{{ $firstNews->title }}</h3>
+                  <p class="text-white/80 text-sm line-clamp-2">
+                     {{ $firstNews->excerpt }}
+                  </p>
+               </div>
+            </a>
+         @endif
       </div>
    </section>
 
