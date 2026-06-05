@@ -9,7 +9,7 @@ class PortalController extends Controller
 {
     public function index()
     {
-        $featuredNews = News::published()
+        $firstNews = News::published()
             ->internalNews()
             ->featured()
             ->latest('published_at')
@@ -17,13 +17,13 @@ class PortalController extends Controller
 
         $news = News::published()
             ->internalNews()
-            ->when($featuredNews, function ($query) use ($featuredNews) {
-                return $query->where('id', '!=', $featuredNews->id);
+            ->when($firstNews, function ($query) use ($firstNews) {
+                return $query->where('id', '!=', $firstNews->id);
             })
             ->latest('published_at')
             ->paginate(12);
 
-        return view('portal.index', compact('featuredNews', 'news'));
+        return view('portal.index', compact('firstNews', 'news'));
     }
 
     public function show(News $news)

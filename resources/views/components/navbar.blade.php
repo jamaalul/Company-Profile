@@ -17,7 +17,7 @@
         <!-- Desktop Menu -->
         <div class="hidden md:flex items-center gap-8" @if($alwaysBlack) :class="open ? 'text-white' : 'text-gray-900'"
         @else :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'" @endif>
-            <a href="/" class="hover:text-blue-300 text-xl transition">Home</a>
+            <a href="/" class="hover:text-blue-300 text-xl transition">Beranda</a>
             <a href="/about-us" class="hover:text-blue-300 text-xl transition">Tentang Kami</a>
             <a href="/news" class="hover:text-blue-300 text-xl transition">Berita</a>
             <a href="/portal" class="hover:text-blue-300 text-xl transition">Portal HIMTI</a>
@@ -70,7 +70,7 @@
         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 -translate-y-full"
         class="md:hidden top-0 left-0 z-40 absolute flex flex-col justify-center items-center gap-6 bg-gray-900/95 backdrop-blur-lg w-full h-screen text-white text-2xl">
-        <a href="/" class="hover:text-blue-400 transition" @click="open = false">Home</a>
+        <a href="/" class="hover:text-blue-400 transition" @click="open = false">Beranda</a>
         <a href="/about-us" class="hover:text-blue-400 transition" @click="open = false">Tentang Kami</a>
         <a href="/news" class="hover:text-blue-400 transition" @click="open = false">Berita</a>
         <a href="/portal" class="hover:text-blue-400 transition" @click="open = false">Portal HIMTI</a>
