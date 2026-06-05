@@ -1,7 +1,5 @@
 @extends('layouts.new-app')
 
-@section('navbar_always_black')@endsection
-
 @section('content')
 
     {{-- LATEST NEWS SECTION --}}
