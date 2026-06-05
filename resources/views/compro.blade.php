@@ -1,6 +1,6 @@
 @extends('layouts.new-app')
 
-@section('title', 'HIMTI - Teknik Informatika')
+@section('title', 'Teknik Informatika Universitas Airlangga')
 
 @section('content')
     {{-- HERO SECTION --}}

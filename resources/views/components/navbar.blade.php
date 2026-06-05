@@ -1,17 +1,22 @@
+@php $alwaysBlack = $alwaysBlack ?? false; @endphp
 <nav x-data="{ open: false, sopOpen: false, scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 20)"
-    class="top-0 left-0 z-50 fixed w-full transition-colors duration-300"
-    :class="{ 'bg-gray-900/90 backdrop-blur-md': open, 'bg-white': scrolled && !open, 'bg-transparent': !scrolled && !open }">
+    class="top-0 left-0 z-50 fixed w-full transition-colors duration-300" @if($alwaysBlack)
+    :class="{ 'bg-gray-900/90 backdrop-blur-md': open, 'bg-white': !open }" @else
+        :class="{ 'bg-gray-900/90 backdrop-blur-md': open, 'bg-white': scrolled && !open, 'bg-transparent': !scrolled && !open }"
+    @endif>
     <div class="flex justify-between items-center p-4 px-6 md:px-16 w-full">
         <!-- Logo Section -->
         <div class="z-50 flex items-center gap-2 md:gap-4">
             <img src="{{ asset('assets/logo-hima-mini.webp') }}" alt="Logo HIMTI" class="h-12 md:h-18 object-bottom">
-            <h3 class="font-semibold md:text-2xl leading-tight"
-                :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'">Himpunan Mahasiswa<br>D4 Teknik
+            <h3 class="font-semibold md:text-2xl leading-tight" @if($alwaysBlack)
+            :class="open ? 'text-white' : 'text-gray-900'" @else
+                :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'" @endif>Himpunan Mahasiswa<br>D4 Teknik
                 Informatika</h3>
         </div>
 
         <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center gap-8" :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'">
+        <div class="hidden md:flex items-center gap-8" @if($alwaysBlack) :class="open ? 'text-white' : 'text-gray-900'"
+        @else :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'" @endif>
             <a href="/" class="hover:text-blue-300 text-xl transition">Home</a>
             <a href="/about-us" class="hover:text-blue-300 text-xl transition">Tentang Kami</a>
             <a href="/news" class="hover:text-blue-300 text-xl transition">Berita</a>
@@ -45,8 +50,9 @@
         </div>
 
         <!-- Mobile Menu Toggle Button -->
-        <button @click="open = !open" class="md:hidden z-50 focus:outline-none"
-            :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'">
+        <button @click="open = !open" class="md:hidden z-50 focus:outline-none" @if($alwaysBlack)
+        :class="open ? 'text-white' : 'text-gray-900'" @else
+            :class="(scrolled && !open) ? 'text-gray-900' : 'text-white'" @endif>
             <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                 stroke="currentColor" class="w-8 h-8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />

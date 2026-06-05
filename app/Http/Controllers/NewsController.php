@@ -9,7 +9,7 @@ class NewsController extends Controller
 {
     public function index()
     {
-        $featuredNews = News::published()
+        $firstNews = News::published()
             ->publicNews()
             ->featured()
             ->latest('published_at')
@@ -17,13 +17,13 @@ class NewsController extends Controller
 
         $news = News::published()
             ->publicNews()
-            ->when($featuredNews, callback: function ($query) use ($featuredNews) {
-                return $query->where('id', '!=', $featuredNews->id);
+            ->when($firstNews, callback: function ($query) use ($firstNews) {
+                return $query->where('id', '!=', $firstNews->id);
             })
             ->latest('published_at')
             ->paginate(12);
 
-        return view('news.index', compact('featuredNews', 'news'));
+        return view('news.index', compact('firstNews', 'news'));
     }
 
     public function show(News $news)

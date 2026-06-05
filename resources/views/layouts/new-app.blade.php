@@ -10,7 +10,7 @@
 </head>
 
 <body class="overflow-x-hidden font-sans">
-    @include('components.navbar')
+    @include('components.navbar', ['alwaysBlack' => $__env->hasSection('navbar_always_black')])
     @yield('content')
     @include('components.footer')
 </body>
