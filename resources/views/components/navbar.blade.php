@@ -43,7 +43,7 @@
                     x-transition:leave-start="transform opacity-100 scale-100"
                     x-transition:leave-end="transform opacity-0 scale-95"
                     class="right-0 z-50 absolute bg-white shadow-lg mt-2 py-1 rounded-md w-48 text-gray-800">
-                    <a href="#" class="block hover:bg-gray-100 px-4 py-2">Partnership</a>
+                    <a href="https://wa.me/6281459189743" class="block hover:bg-gray-100 px-4 py-2">Partnership</a>
                     <a href="/sop/medinfo" class="block hover:bg-gray-100 px-4 py-2">Media Partner</a>
                 </div>
             </div>

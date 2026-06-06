@@ -321,7 +321,7 @@
                     Prosedur kerjasama resmi HIMTI UNAIR.
                 </p>
                 <div class="flex flex-col gap-2 mt-auto w-full">
-                    <a href=""
+                    <a href="https://wa.me/6281459189743"
                         class="flex justify-center items-center gap-2 bg-green-600 hover:bg-green-700 hover:shadow-md px-4 lg:px-6 py-2 lg:py-3 rounded-full w-full font-medium text-white transition-all hover:-translate-y-1 duration-300 transform">
                         <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg"
                             class="size-6">
@@ -355,7 +355,7 @@
                         </svg>
                         Lihat SOP
                     </a>
-                    <a href=""
+                    <a href="https://wa.me/6281802546229"
                         class="flex justify-center items-center gap-2 bg-green-600 hover:bg-green-700 hover:shadow-md px-4 lg:px-6 py-2 lg:py-3 rounded-full w-full font-medium text-white transition-all hover:-translate-y-1 duration-300 transform">
                         <svg width="37" height="37" viewBox="0 0 37 37" fill="none" xmlns="http://www.w3.org/2000/svg"
                             class="size-6">
