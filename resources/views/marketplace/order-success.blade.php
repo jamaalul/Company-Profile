@@ -68,7 +68,7 @@
                                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
                                 </path>
                             </svg>
-                            Anda dapat melacak status pesanan melalui link di bawah ini.
+                            Anda dapat melacak status pesanan melalui link yang kami kirim ke email atau di bawah ini.
                         </li>
                         <li class="flex items-start gap-2">
                             <svg class="mt-0.5 w-4 h-4 text-blue-500 shrink-0" fill="none" stroke="currentColor"

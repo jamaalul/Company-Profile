@@ -13,58 +13,70 @@ class StoreStatsOverview extends StatsOverviewWidget
     {
         $startDate = now()->subDays(6)->startOfDay();
 
-        $completedOrders = Order::select('id', 'created_at', 'total_price')
-            ->where('status', OrderStatus::Completed)
-            ->where('created_at', '>=', $startDate)
-            ->get()
-            ->groupBy(fn ($order) => $order->created_at->format('Y-m-d'));
-            
-        $processingOrders = Order::select('id', 'created_at')
-            ->where('status', '!=', OrderStatus::Completed)
-            ->where('status', '!=', OrderStatus::Rejected)
+        $orders = Order::select('id', 'status', 'created_at', 'total_price')
             ->where('created_at', '>=', $startDate)
             ->get()
             ->groupBy(fn ($order) => $order->created_at->format('Y-m-d'));
 
-        $completedChart = [];
-        $processingChart = [];
-        $revenueChart = [];
+        $charts = [
+            OrderStatus::PendingApproval->value => [],
+            OrderStatus::Approved->value => [],
+            OrderStatus::Rejected->value => [],
+            OrderStatus::Completed->value => [],
+            'revenue' => [],
+        ];
 
-        $completed7Days = 0;
-        $processing7Days = 0;
+        $counts7Days = [
+            OrderStatus::PendingApproval->value => 0,
+            OrderStatus::Approved->value => 0,
+            OrderStatus::Rejected->value => 0,
+            OrderStatus::Completed->value => 0,
+        ];
 
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
+            $dayOrders = $orders->get($date, collect());
             
-            $completedDay = $completedOrders->get($date, collect());
-            $completedCount = $completedDay->count();
-            $completedChart[] = $completedCount;
-            $completed7Days += $completedCount;
-            
-            $processingDay = $processingOrders->get($date, collect());
-            $processingCount = $processingDay->count();
-            $processingChart[] = $processingCount;
-            $processing7Days += $processingCount;
+            foreach (OrderStatus::cases() as $status) {
+                $statusOrders = $dayOrders->where('status', $status->value);
+                $count = $statusOrders->count();
+                $charts[$status->value][] = $count;
+                $counts7Days[$status->value] += $count;
+            }
 
-            $revenueChart[] = $completedDay->sum('total_price');
+            $charts['revenue'][] = $dayOrders->where('status', OrderStatus::Completed->value)->sum('total_price');
         }
 
         return [
-            Stat::make('Pesanan Selesai', Order::where('status', OrderStatus::Completed)->count())
-            ->description("{$completed7Days} pesanan diselesaikan dalam 7 hari terakhir")
-            ->descriptionIcon('heroicon-o-check-circle')
-            ->color('success')
-            ->chart($completedChart),
-            Stat::make('Pesanan Diproses', Order::whereNotIn('status', [OrderStatus::Completed, OrderStatus::Rejected])->count())
-            ->description("{$processing7Days} pesanan diproses dalam 7 hari terakhir")
-            ->descriptionIcon('heroicon-o-clock')
-            ->color('warning')
-            ->chart($processingChart),
+            Stat::make('Menunggu Persetujuan', Order::where('status', OrderStatus::PendingApproval)->count())
+                ->description("{$counts7Days[OrderStatus::PendingApproval->value]} pesanan dalam 7 hari terakhir")
+                ->descriptionIcon(OrderStatus::PendingApproval->icon())
+                ->color(OrderStatus::PendingApproval->color())
+                ->chart($charts[OrderStatus::PendingApproval->value]),
+
+            Stat::make('Disetujui', Order::where('status', OrderStatus::Approved)->count())
+                ->description("{$counts7Days[OrderStatus::Approved->value]} pesanan dalam 7 hari terakhir")
+                ->descriptionIcon(OrderStatus::Approved->icon())
+                ->color(OrderStatus::Approved->color())
+                ->chart($charts[OrderStatus::Approved->value]),
+
+            Stat::make('Ditolak', Order::where('status', OrderStatus::Rejected)->count())
+                ->description("{$counts7Days[OrderStatus::Rejected->value]} pesanan dalam 7 hari terakhir")
+                ->descriptionIcon(OrderStatus::Rejected->icon())
+                ->color(OrderStatus::Rejected->color())
+                ->chart($charts[OrderStatus::Rejected->value]),
+
+            Stat::make('Selesai', Order::where('status', OrderStatus::Completed)->count())
+                ->description("{$counts7Days[OrderStatus::Completed->value]} pesanan dalam 7 hari terakhir")
+                ->descriptionIcon(OrderStatus::Completed->icon())
+                ->color(OrderStatus::Completed->color())
+                ->chart($charts[OrderStatus::Completed->value]),
+
             Stat::make('Total Pemasukan', 'Rp ' . number_format(Order::where('status', OrderStatus::Completed)->sum('total_price'), 0, ',', '.'))
-            ->description('Pemasukan 7 hari terakhir: Rp ' . number_format(array_sum($revenueChart), 0, ',', '.'))
-            ->descriptionIcon('heroicon-o-currency-dollar')
-            ->color('primary')
-            ->chart($revenueChart),
+                ->description('Pemasukan 7 hari terakhir: Rp ' . number_format(array_sum($charts['revenue']), 0, ',', '.'))
+                ->descriptionIcon('heroicon-o-currency-dollar')
+                ->color('primary')
+                ->chart($charts['revenue']),
         ];
     }
 }

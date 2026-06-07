@@ -1,6 +1,6 @@
 @extends('layouts.app-plain')
 
-@section('title', 'Pesanan Berhasil - HIMTI STORE')
+@section('title', 'Lacak Pesanan - HIMTI STORE')
 
 @section('content')
     <section class="flex justify-center items-center bg-slate-100 py-12 min-h-screen font-sans">
@@ -82,21 +82,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Action Buttons -->
-                <div class="bg-white p-6 border-gray-200 border-t">
-                    <div class="flex sm:flex-row flex-col gap-3">
-                        <a href="{{ route('marketplace.track', $order->tracking_token) }}"
-                            class="flex-1 bg-blue-800 hover:bg-blue-700 shadow-sm hover:shadow px-4 py-3 rounded-xl font-semibold text-white text-sm text-center active:scale-95 transition-all">
-                            Lacak Pesanan
-                        </a>
-                        <a href="{{ route('marketplace.index') }}"
-                            class="flex-1 hover:bg-gray-50 px-4 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 text-sm text-center active:scale-95 transition-all">
-                            Belanja Lagi
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
