@@ -117,7 +117,7 @@ class MarketplaceController extends Controller
         }
 
         // Mail
-        // Mail::to($order->buyer_email)->send(new OrderCreatedMail($order)); // Skip since no email in form
+        Mail::to($order->buyer_email)->send(new OrderCreatedMail($order));
 
         return redirect()->route('marketplace.order.success', $order->order_number);
     }
@@ -226,6 +226,9 @@ class MarketplaceController extends Controller
                 }
             }
         }
+
+        // Mail
+        Mail::to($order->buyer_email)->send(new OrderCreatedMail($order));
 
         return redirect()->route('marketplace.order.success', $order->order_number);
     }

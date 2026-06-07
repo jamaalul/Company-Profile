@@ -103,7 +103,7 @@
 
                 {{-- Form --}}
                 <form action="{{ route('marketplace.purchase') }}" method="POST" enctype="multipart/form-data"
-                    class="space-y-8">
+                    class="space-y-8" id="purchase-form">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <input type="hidden" name="quantity" value="1" id="quantity-input">
@@ -302,9 +302,14 @@
                             class="flex justify-center items-center bg-white hover:bg-gray-50 px-8 py-3.5 border border-gray-200 rounded-xl font-semibold text-gray-700 text-center transition-colors">
                             Kembali
                         </a>
-                        <button type="submit"
-                            class="flex flex-1 justify-center items-center gap-2 bg-blue-700 hover:bg-blue-500 px-8 py-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-semibold text-white transition-colors">
-                            Buat Pesanan
+                        <button type="submit" id="submit-btn"
+                            class="flex flex-1 justify-center items-center gap-2 bg-blue-700 hover:bg-blue-500 disabled:opacity-50 px-8 py-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-semibold text-white transition-colors disabled:cursor-not-allowed">
+                            <svg id="submit-spinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg"
+                                width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                            </svg>
+                            <span id="submit-text">Buat Pesanan</span>
                         </button>
                     </div>
 
@@ -315,6 +320,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('purchase-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitSpinner = document.getElementById('submit-spinner');
+            const submitText = document.getElementById('submit-text');
+
+            form.addEventListener('submit', function (e) {
+                setTimeout(() => {
+                    submitBtn.disabled = true;
+                    submitSpinner.classList.remove('hidden');
+                    submitText.textContent = 'Memproses...';
+                }, 10);
+            });
+
             const fileInput = document.getElementById('payment_proof');
             const filePreview = document.getElementById('file-preview');
             const fileName = document.getElementById('file-name');

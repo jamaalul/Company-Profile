@@ -8,6 +8,7 @@ use App\Enums\OrderStatus;
 use App\Mail\OrderApprovedMail;
 use App\Mail\OrderRejectedMail;
 use App\Mail\OrderCompletedMail;
+use App\Mail\OrderRevertedMail;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -153,6 +154,7 @@ class OrderResource extends Resource
                     ->visible(fn (Order $record) => $record->status === OrderStatus::Approved)
                     ->action(function (Order $record) {
                         $record->update(['status' => OrderStatus::PendingApproval]);
+                        Mail::to($record->buyer_email)->send(new OrderRevertedMail($record));
                     }),
             ])
             ->bulkActions([

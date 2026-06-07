@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class OrderCompletedMail extends Mailable implements ShouldQueue
+class OrderRevertedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,14 +21,14 @@ class OrderCompletedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Pesanan Selesai - ' . $this->order->order_number,
+            subject: 'Pesanan Ditinjau Ulang - ' . $this->order->order_number,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.orders.completed',
+            markdown: 'emails.orders.reverted',
             with: [
                 'trackingUrl' => $this->order->getTrackingUrl(),
             ],
