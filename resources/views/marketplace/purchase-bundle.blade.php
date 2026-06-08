@@ -256,10 +256,14 @@
                                         <span class="font-bold text-gray-900">QRIS — Semua e-wallet & M-Banking</span>
                                     </div>
                                 </div>
-                                <div
-                                    class="inline-block bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
-                                    Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload screenshot
-                                    bukti pembayaran di bawah ini.
+                                <div class="flex flex-col gap-3">
+                                    <div class="bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
+                                        Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload screenshot
+                                        bukti pembayaran di bawah ini.
+                                    </div>
+                                    <div class="bg-blue-50 p-3 border-blue-400 border-l-4 rounded-r text-blue-800 text-sm text-left">
+                                        <span class="font-semibold">Opsi Pembayaran:</span> Anda dapat membayar minimal 50% dari total tagihan sekarang, dan melunasinya nanti.
+                                    </div>
                                 </div>
                             </div>
                         </div>
