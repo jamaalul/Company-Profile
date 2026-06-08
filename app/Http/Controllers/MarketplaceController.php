@@ -12,6 +12,7 @@ use App\Enums\OrderStatus;
 use App\Mail\OrderCreatedMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class MarketplaceController extends Controller
@@ -61,63 +62,69 @@ class MarketplaceController extends Controller
             return back()->withInput()->with('error', 'Produk tidak tersedia atau stok tidak cukup.');
         }
 
-        // Handle file upload
+        // Handle file upload before transaction (filesystem is not transactional)
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
             $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
         }
 
-        // Calculate total
-        $totalPrice = $product->price * $validated['quantity'];
-
-        $order = Order::create([
-            'order_number' => Order::generateOrderNumber(),
-            'tracking_token' => Str::uuid()->toString(),
-            'buyer_name' => strip_tags($validated['customer_name']),
-            'buyer_email' => strip_tags($validated['customer_email']),
-            'buyer_whatsapp' => strip_tags($validated['customer_phone']),
-            'total_price' => $totalPrice,
-            'status' => OrderStatus::PendingApproval, // Usually PendingPayment, but we collect proof upfront
-            'payment_proof_path' => $paymentProofPath,
-        ]);
-
-        $orderItem = OrderItem::create([
-            'order_id' => $order->id,
-            'product_id' => $product->id,
-            'orderable_type' => 'product',
-            'quantity' => $validated['quantity'],
-            'unit_price' => $product->price,
-        ]);
-
-        // Decrement stock
-        $product->decrement('stock', $validated['quantity']);
-
-        // Let's create dummy ProductField records for the product if they don't exist
-        // to map these answers, or just store them differently. 
-        // We'll create the field values based on dynamic fields if they exist.
-        
+        $fieldFiles = [];
         foreach ($product->fields as $field) {
             $fieldName = 'field_' . $field->id;
-            if ($request->has($fieldName) || $request->hasFile($fieldName)) {
-                $value = $request->input($fieldName);
-                $filePath = null;
-                
-                if ($field->field_type === 'file' && $request->hasFile($fieldName)) {
-                    $filePath = $request->file($fieldName)->store('order_files', 'public');
-                    $value = null;
-                }
-
-                OrderItemFieldValue::create([
-                    'order_item_id' => $orderItem->id,
-                    'product_field_id' => $field->id,
-                    'value' => $value,
-                    'file_path' => $filePath,
-                ]);
+            if ($field->field_type === 'file' && $request->hasFile($fieldName)) {
+                $fieldFiles[$field->id] = $request->file($fieldName)->store('order_files', 'public');
             }
         }
 
-        // Mail
-        Mail::to($order->buyer_email)->send(new OrderCreatedMail($order));
+        // Wrap all DB operations in a transaction for atomicity
+        $order = DB::transaction(function () use ($validated, $product, $paymentProofPath, $request, $fieldFiles) {
+            $totalPrice = $product->price * $validated['quantity'];
+
+            $order = Order::create([
+                'order_number' => Order::generateOrderNumber(),
+                'tracking_token' => Str::uuid()->toString(),
+                'buyer_name' => strip_tags($validated['customer_name']),
+                'buyer_email' => strip_tags($validated['customer_email']),
+                'buyer_whatsapp' => strip_tags($validated['customer_phone']),
+                'total_price' => $totalPrice,
+                'status' => OrderStatus::PendingApproval,
+                'payment_proof_path' => $paymentProofPath,
+            ]);
+
+            $orderItem = OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product->id,
+                'orderable_type' => 'product',
+                'quantity' => $validated['quantity'],
+                'unit_price' => $product->price,
+            ]);
+
+            $product->decrement('stock', $validated['quantity']);
+
+            foreach ($product->fields as $field) {
+                $fieldName = 'field_' . $field->id;
+                $value = $request->input($fieldName);
+                $filePath = $fieldFiles[$field->id] ?? null;
+
+                if ($filePath) {
+                    $value = null;
+                }
+
+                if ($value !== null || $filePath !== null) {
+                    OrderItemFieldValue::create([
+                        'order_item_id' => $orderItem->id,
+                        'product_field_id' => $field->id,
+                        'value' => $value,
+                        'file_path' => $filePath,
+                    ]);
+                }
+            }
+
+            return $order;
+        });
+
+        // Defer mail to send after the HTTP response, so it never blocks the redirect
+        defer(fn () => Mail::to($order->buyer_email)->send(new OrderCreatedMail($order)));
 
         return redirect()->route('marketplace.order.success', $order->order_number);
     }
@@ -173,62 +180,78 @@ class MarketplaceController extends Controller
             }
         }
 
+        // Handle file uploads before transaction (filesystem is not transactional)
         $paymentProofPath = null;
         if ($request->hasFile('payment_proof')) {
             $paymentProofPath = $request->file('payment_proof')->store('payment_proofs', 'public');
         }
 
-        $totalPrice = $bundle->special_price * $validated['quantity'];
-
-        $order = Order::create([
-            'order_number' => Order::generateOrderNumber(),
-            'tracking_token' => Str::uuid()->toString(),
-            'buyer_name' => strip_tags($validated['customer_name']),
-            'buyer_email' => strip_tags($validated['customer_email']),
-            'buyer_whatsapp' => strip_tags($validated['customer_phone']),
-            'total_price' => $totalPrice,
-            'status' => OrderStatus::PendingApproval,
-            'payment_proof_path' => $paymentProofPath,
-        ]);
-
-        $orderItem = OrderItem::create([
-            'order_id' => $order->id,
-            'bundle_id' => $bundle->id,
-            'orderable_type' => 'bundle',
-            'quantity' => $validated['quantity'],
-            'unit_price' => $bundle->special_price,
-        ]);
-
+        $fieldFiles = [];
         foreach ($bundle->products as $product) {
-            $requiredQuantity = $product->pivot->quantity * $validated['quantity'];
-            $product->decrement('stock', $requiredQuantity);
-
-            $fieldsData = $request->input('fields.' . $product->id, []);
             for ($copy = 0; $copy < $product->pivot->quantity; $copy++) {
                 foreach ($product->fields as $field) {
-                    $value = $fieldsData[$copy][$field->id] ?? null;
-                    $filePath = null;
-
                     if ($field->field_type === 'file' && $request->hasFile("fields.{$product->id}.{$copy}.{$field->id}")) {
-                        $filePath = $request->file("fields.{$product->id}.{$copy}.{$field->id}")->store('order_files', 'public');
-                        $value = null;
-                    }
-
-                    if ($value !== null || $filePath !== null) {
-                        OrderItemFieldValue::create([
-                            'order_item_id' => $orderItem->id,
-                            'product_field_id' => $field->id,
-                            'value' => $value,
-                            'file_path' => $filePath,
-                            'copy_index' => $copy,
-                        ]);
+                        $fieldFiles[$product->id][$copy][$field->id] = $request->file("fields.{$product->id}.{$copy}.{$field->id}")->store('order_files', 'public');
                     }
                 }
             }
         }
 
-        // Mail
-        Mail::to($order->buyer_email)->send(new OrderCreatedMail($order));
+        // Wrap all DB operations in a transaction for atomicity
+        $order = DB::transaction(function () use ($validated, $bundle, $paymentProofPath, $request, $fieldFiles) {
+            $totalPrice = $bundle->special_price * $validated['quantity'];
+
+            $order = Order::create([
+                'order_number' => Order::generateOrderNumber(),
+                'tracking_token' => Str::uuid()->toString(),
+                'buyer_name' => strip_tags($validated['customer_name']),
+                'buyer_email' => strip_tags($validated['customer_email']),
+                'buyer_whatsapp' => strip_tags($validated['customer_phone']),
+                'total_price' => $totalPrice,
+                'status' => OrderStatus::PendingApproval,
+                'payment_proof_path' => $paymentProofPath,
+            ]);
+
+            $orderItem = OrderItem::create([
+                'order_id' => $order->id,
+                'bundle_id' => $bundle->id,
+                'orderable_type' => 'bundle',
+                'quantity' => $validated['quantity'],
+                'unit_price' => $bundle->special_price,
+            ]);
+
+            foreach ($bundle->products as $product) {
+                $requiredQuantity = $product->pivot->quantity * $validated['quantity'];
+                $product->decrement('stock', $requiredQuantity);
+
+                $fieldsData = $request->input('fields.' . $product->id, []);
+                for ($copy = 0; $copy < $product->pivot->quantity; $copy++) {
+                    foreach ($product->fields as $field) {
+                        $value = $fieldsData[$copy][$field->id] ?? null;
+                        $filePath = $fieldFiles[$product->id][$copy][$field->id] ?? null;
+
+                        if ($filePath) {
+                            $value = null;
+                        }
+
+                        if ($value !== null || $filePath !== null) {
+                            OrderItemFieldValue::create([
+                                'order_item_id' => $orderItem->id,
+                                'product_field_id' => $field->id,
+                                'value' => $value,
+                                'file_path' => $filePath,
+                                'copy_index' => $copy,
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            return $order;
+        });
+
+        // Defer mail to send after the HTTP response, so it never blocks the redirect
+        defer(fn () => Mail::to($order->buyer_email)->send(new OrderCreatedMail($order)));
 
         return redirect()->route('marketplace.order.success', $order->order_number);
     }
