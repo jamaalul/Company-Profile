@@ -184,6 +184,21 @@ class OrderResource extends Resource
                         $record->update(['status' => OrderStatus::Approved]);
                         Mail::to($record->buyer_email)->send(new \App\Mail\OrderFinalPaymentApprovedMail($record));
                     }),
+                Action::make('reach_out_payment')
+                    ->label('Tagih Pelunasan')
+                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                    ->color('warning')
+                    ->visible(fn (Order $record) => $record->status === OrderStatus::PendingFinalPayment)
+                    ->url(function (Order $record) {
+                        $phone = ltrim(preg_replace('/[^0-9]/', '', $record->buyer_whatsapp), '0');
+                        if (!str_starts_with($phone, '62')) {
+                            $phone = '62' . $phone;
+                        }
+                        $trackingUrl = $record->getTrackingUrl();
+                        $message = "Halo {$record->buyer_name},\n\nPesanan Anda dengan nomor {$record->order_number} sedang menunggu pelunasan. Silakan cek status pesanan dan lakukan pembayaran pelunasan melalui link berikut:\n\n{$trackingUrl}\n\nTerima kasih,\nHIMTI Store.";
+                        return "https://wa.me/{$phone}?text=" . urlencode($message);
+                    })
+                    ->openUrlInNewTab(),
                 Action::make('complete')
                     ->label('Selesai')
                     ->icon('heroicon-o-check-badge')
