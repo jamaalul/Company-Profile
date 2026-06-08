@@ -12,6 +12,13 @@ class ListOrders extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            \Filament\Actions\ExportAction::make()
+                ->exporter(\App\Filament\Exports\OrderExporter::class)
+                ->formats([\Filament\Actions\Exports\Enums\ExportFormat::Csv])
+                ->after(function (\Livewire\Component $livewire) {
+                    $livewire->redirect(request()->header('Referer'));
+                }),
+        ];
     }
 }

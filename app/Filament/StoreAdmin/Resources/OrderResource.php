@@ -23,6 +23,8 @@ use Filament\Infolists;
 use Illuminate\Support\Facades\Mail;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 
 class OrderResource extends Resource
 {
@@ -223,6 +225,12 @@ class OrderResource extends Resource
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(\App\Filament\Exports\OrderExporter::class)
+                        ->formats([\Filament\Actions\Exports\Enums\ExportFormat::Csv])
+                        ->after(function (\Livewire\Component $livewire) {
+                            $livewire->redirect(request()->header('Referer'));
+                        }),
                 ]),
             ]);
     }
