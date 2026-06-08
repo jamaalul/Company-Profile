@@ -239,4 +239,32 @@ class MarketplaceController extends Controller
         $order = Order::with('items')->where('tracking_token', $token)->firstOrFail();
         return view('marketplace.tracking', compact('order'));
     }
+
+    public function submitFinalPayment(Request $request, $token)
+    {
+        $order = Order::where('tracking_token', $token)->firstOrFail();
+
+        if ($order->status !== OrderStatus::PendingFinalPayment || $order->payment_type !== 'down_payment') {
+            return back()->with('error', 'Aksi tidak diizinkan.');
+        }
+
+        $request->validate([
+            'final_payment_proof' => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
+        ], [
+            'final_payment_proof.required' => 'Bukti pembayaran wajib diunggah.',
+            'final_payment_proof.image' => 'Bukti pembayaran harus berupa gambar.',
+            'final_payment_proof.mimes' => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'final_payment_proof.max' => 'Ukuran gambar maksimal 5MB.',
+        ]);
+
+        if ($request->hasFile('final_payment_proof')) {
+            $path = $request->file('final_payment_proof')->store('payment_proofs', 'public');
+            $order->update([
+                'final_payment_proof_path' => $path,
+                'status' => OrderStatus::PendingFinalApproval,
+            ]);
+        }
+
+        return back()->with('success', 'Bukti pelunasan berhasil diunggah dan sedang menunggu persetujuan.');
+    }
 }

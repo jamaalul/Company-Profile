@@ -19,7 +19,10 @@ class Order extends Model
         'buyer_whatsapp',
         'total_price',
         'status',
+        'payment_type',
+        'amount_paid',
         'payment_proof_path',
+        'final_payment_proof_path',
         'paid_at',
         'is_preorder',
     ];
@@ -34,6 +37,7 @@ class Order extends Model
             'status' => OrderStatus::class,
             'paid_at' => 'datetime',
             'total_price' => 'decimal:2',
+            'amount_paid' => 'decimal:2',
             'is_preorder' => 'boolean',
         ];
     }
@@ -63,6 +67,11 @@ class Order extends Model
     public function getTrackingUrl(): string
     {
         return route('marketplace.track', $this->tracking_token);
+    }
+
+    public function getRemainingBalanceAttribute(): float
+    {
+        return max(0, $this->total_price - ($this->amount_paid ?? 0));
     }
 
     public static function generateOrderNumber(): string

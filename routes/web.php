@@ -53,6 +53,7 @@ Route::prefix('marketplace')->name('marketplace.')->group(function () {
     Route::get('/bundle/{bundle}', [MarketplaceController::class, 'showBundle'])->name('bundle.show');
     Route::get('/bundle/{bundle}/purchase', [MarketplaceController::class, 'purchaseBundleForm'])->name('bundle.purchase.form');
     Route::post('/bundle/purchase', [MarketplaceController::class, 'purchaseBundle'])->name('bundle.purchase');
+    Route::post('/order/final-payment/{token}', [MarketplaceController::class, 'submitFinalPayment'])->name('order.final-payment')->middleware('throttle:10,1');
     Route::get('/order-success/{orderNumber}', [MarketplaceController::class, 'orderSuccess'])->name('order.success');
 });
 

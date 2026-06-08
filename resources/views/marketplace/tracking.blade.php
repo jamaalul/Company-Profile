@@ -40,12 +40,200 @@
                                 {{ $order->status->label() }}
                             </span>
                         </div>
-                        <div class="flex justify-between items-center pt-2">
-                            <span class="font-bold text-gray-700 text-xs uppercase tracking-wider">Total Pembayaran</span>
-                            <span class="font-bold text-blue-700 text-lg">Rp
-                                {{ number_format($order->total_price, 0, ',', '.') }}</span>
-                        </div>
+                        @if($order->payment_type === 'down_payment')
+                            <div class="flex justify-between items-center pb-3 border-gray-200 border-b border-dashed">
+                                <span class="text-gray-500">Total Harga</span>
+                                <span class="font-medium text-gray-900">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-3 border-gray-200 border-b border-dashed">
+                                <span class="text-gray-500">Uang Muka (Dibayar)</span>
+                                <span class="font-medium text-emerald-600">Rp {{ number_format($order->amount_paid, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="font-bold text-gray-700 text-xs uppercase tracking-wider">Sisa Pembayaran</span>
+                                <span class="font-bold text-blue-700 text-lg">Rp {{ number_format($order->remaining_balance, 0, ',', '.') }}</span>
+                            </div>
+                        @else
+                            <div class="flex justify-between items-center pt-2">
+                                <span class="font-bold text-gray-700 text-xs uppercase tracking-wider">Total Pembayaran</span>
+                                <span class="font-bold text-blue-700 text-lg">Rp {{ number_format($order->total_price, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
                     </div>
+
+                    @if($order->status === \App\Enums\OrderStatus::PendingFinalPayment && $order->payment_type === 'down_payment')
+                        <div class="mt-6 pt-6 border-t border-gray-200 border-dashed">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="flex justify-center items-center bg-gray-900 rounded-full w-6 h-6 font-bold text-white text-xs">!</span>
+                                <h3 class="font-bold text-gray-500 text-xs md:text-sm uppercase tracking-widest">Pelunasan via QRIS</h3>
+                            </div>
+                            
+                            @if(session('success'))
+                                <div class="mb-6 p-4 bg-emerald-50 text-emerald-700 text-sm rounded-lg border border-emerald-200">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            @if(session('error'))
+                                <div class="flex items-start gap-3 bg-red-50 mb-6 p-4 border-red-500 border-l-4 rounded-r-lg">
+                                    <svg class="mt-0.5 w-5 h-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-bold text-red-800 text-sm">Oops!</p>
+                                        <p class="mt-1 text-red-700 text-sm">{{ session('error') }}</p>
+                                    </div>
+                                </div>
+                            @endif
+                            @error('final_payment_proof')
+                                <div class="flex items-start gap-3 bg-red-50 mb-6 p-4 border-red-500 border-l-4 rounded-r-lg">
+                                    <svg class="mt-0.5 w-5 h-5 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-bold text-red-800 text-sm">Terdapat Kesalahan</p>
+                                        <p class="mt-1 text-red-700 text-sm">{{ $message }}</p>
+                                    </div>
+                                </div>
+                            @enderror
+
+                            {{-- QRIS block --}}
+                            <div class="flex flex-col gap-6 py-6 border-gray-200 border-y border-dashed mb-6">
+                                <div class="bg-gray-50 border border-gray-200 h-auto shrink-0 w-full flex justify-center py-4 rounded-lg">
+                                    <img src="{{ asset('assets/qris.png') }}" alt="QRIS Himti" class="w-48 object-center object-contain">
+                                </div>
+                                <div class="flex-1 w-full text-center">
+                                    <h4 class="mb-4 font-bold text-gray-900 text-sm uppercase tracking-widest">
+                                        Ekraf Himti</h4>
+                                    <div class="space-y-3 mb-6">
+                                        <div class="flex justify-center text-sm">
+                                            <span class="mt-0.5 w-20 font-medium text-gray-500 text-xs uppercase tracking-widest">NMID</span>
+                                            <span class="font-bold text-gray-900">ID1025409869357</span>
+                                        </div>
+                                        <div class="flex justify-center text-sm">
+                                            <span class="mt-0.5 w-20 font-medium text-gray-500 text-xs uppercase tracking-widest">Metode</span>
+                                            <span class="font-bold text-gray-900">QRIS — Semua e-wallet & M-Banking</span>
+                                        </div>
+                                    </div>
+                                    <div class="inline-block bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
+                                        Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload screenshot bukti pelunasan di bawah ini.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form action="{{ route('marketplace.order.final-payment', $order->tracking_token) }}" method="POST" enctype="multipart/form-data" id="payment-form">
+                                @csrf
+                                {{-- Upload Bukti Pembayaran --}}
+                                <div>
+                                    <label class="block mb-2 font-semibold text-gray-700 text-sm">Upload Bukti Pelunasan <span class="text-red-500">*</span></label>
+
+                                    <div class="group relative bg-gray-50 p-6 border-2 border-gray-300 hover:border-blue-500 border-dashed rounded-xl text-center transition-colors cursor-pointer"
+                                        id="upload-zone">
+                                        <svg class="mx-auto mb-3 w-8 h-8 text-gray-400 group-hover:text-blue-500 transition-colors"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                            stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                        </svg>
+                                        <div class="text-gray-600 text-sm"><strong class="text-blue-700">Pilih file</strong> atau drag &amp; drop di sini</div>
+                                        <div class="mt-2 text-gray-500 text-xs">PNG, JPG, JPEG — Maks. 5 MB</div>
+                                        <input id="final_payment_proof" name="final_payment_proof" type="file" accept="image/jpeg,image/png,image/jpg"
+                                            class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" required>
+                                    </div>
+
+                                    <div class="flex justify-between items-center bg-green-50 mt-4 p-4 border border-green-200 rounded-xl"
+                                        id="file-preview" style="display:none;">
+                                        <div class="flex items-center gap-3 overflow-hidden">
+                                            <svg class="w-6 h-6 text-green-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="font-medium text-gray-900 text-sm truncate"
+                                                id="file-name"></span>
+                                        </div>
+                                        <button type="button"
+                                            class="bg-white hover:bg-red-50 p-1.5 rounded-md focus:outline-none text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                                            id="remove-file" aria-label="Hapus file">
+                                            <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" id="submit-btn" class="mt-6 flex w-full justify-center items-center gap-2 bg-blue-700 hover:bg-blue-600 disabled:opacity-50 px-8 py-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-semibold text-white transition-colors disabled:cursor-not-allowed text-sm">
+                                    <svg id="submit-spinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                    </svg>
+                                    <span id="submit-text">Kirim Bukti Pelunasan</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const form = document.getElementById('payment-form');
+                                const submitBtn = document.getElementById('submit-btn');
+                                const submitSpinner = document.getElementById('submit-spinner');
+                                const submitText = document.getElementById('submit-text');
+
+                                if(form) {
+                                    form.addEventListener('submit', function (e) {
+                                        setTimeout(() => {
+                                            submitBtn.disabled = true;
+                                            submitSpinner.classList.remove('hidden');
+                                            submitText.textContent = 'Memproses...';
+                                        }, 10);
+                                    });
+                                }
+
+                                const fileInput = document.getElementById('final_payment_proof');
+                                const filePreview = document.getElementById('file-preview');
+                                const fileName = document.getElementById('file-name');
+                                const removeBtn = document.getElementById('remove-file');
+                                const uploadZone = document.getElementById('upload-zone');
+
+                                if(fileInput) {
+                                    fileInput.addEventListener('change', function (e) {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            fileName.textContent = file.name;
+                                            filePreview.style.display = 'flex';
+
+                                            // Tailwind dynamic classes for active state
+                                            uploadZone.classList.remove('border-gray-300', 'bg-gray-50');
+                                            uploadZone.classList.add('border-green-500', 'bg-green-50');
+                                        }
+                                    });
+                                }
+
+                                if(removeBtn) {
+                                    removeBtn.addEventListener('click', function () {
+                                        fileInput.value = '';
+                                        filePreview.style.display = 'none';
+
+                                        // Revert Tailwind classes
+                                        uploadZone.classList.remove('border-green-500', 'bg-green-50');
+                                        uploadZone.classList.add('border-gray-300', 'bg-gray-50');
+                                    });
+                                }
+
+                                if(uploadZone) {
+                                    // Drag-and-drop visual feedback
+                                    uploadZone.addEventListener('dragover', () => {
+                                        uploadZone.classList.add('border-blue-500', 'bg-blue-50');
+                                    });
+                                    uploadZone.addEventListener('dragleave', () => {
+                                        uploadZone.classList.remove('border-blue-500', 'bg-blue-50');
+                                    });
+                                    uploadZone.addEventListener('drop', () => {
+                                        uploadZone.classList.remove('border-blue-500', 'bg-blue-50');
+                                    });
+                                }
+                            });
+                        </script>
+                    @endif
                 </div>
 
                 <!-- Next Steps -->
