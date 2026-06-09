@@ -26,13 +26,18 @@
         <div class="flex flex-col gap-8 w-full max-w-5xl">
             <div class="flex md:flex-row flex-col gap-8 rounded-2xl w-full">
                 {{-- Image --}}
-                <div class="bg-white rounded-xl md:w-1/2 aspect-square overflow-hidden shrink-0">
+                <div class="relative bg-white rounded-xl md:w-1/2 aspect-square overflow-hidden shrink-0">
                     @if($product->image_path)
                         <img src="{{ Str::startsWith($product->image_path, 'http') ? $product->image_path : Storage::url($product->image_path) }}"
                             alt="{{ $product->name }}" class="w-full h-full object-cover">
                     @else
                         <img src="/placeholder.svg?height=500&width=500" alt="{{ $product->name }}"
                             class="w-full h-full object-cover">
+                    @endif
+                    @if($product->is_preorder)
+                        <span class="top-4 right-4 absolute bg-orange-500 shadow-sm px-3 py-1 rounded-full font-bold text-xs text-white sm:text-sm tracking-wider">
+                            PRE-ORDER
+                        </span>
                     @endif
                 </div>
 
@@ -42,7 +47,9 @@
                         <div class="flex flex-col gap-2">
                             <h2 class="font-bold text-[#578FCE] text-3xl lg:text-4xl">Rp
                                 {{ number_format($product->price, 0, ',', '.') }}</h2>
-                            <p class="font-semibold text-zinc-600">Tersisa: {{ $product->stock }} item</p>
+                            @if(!$product->is_preorder)
+                                <p class="font-semibold text-zinc-600">Tersisa: {{ $product->stock }} item</p>
+                            @endif
                         </div>
 
                         <div class="max-w-none text-zinc-700 leading-relaxed prose prose-zinc">

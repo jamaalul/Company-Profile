@@ -39,9 +39,14 @@
                 @forelse ($bundles as $bundle)
                     <a href="{{ route('marketplace.bundle.show', $bundle->id) }}"
                         class="bg-white hover:shadow-md rounded-xl w-full overflow-hidden transition-all hover:-translate-y-1">
-                        <div class="bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
+                        <div class="relative bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
                             <img src="{{ Str::startsWith($bundle->image_path, 'http') ? $bundle->image_path : Storage::url($bundle->image_path) }}"
                                 alt="{{ $bundle->name }}" class="w-full h-full object-cover">
+                            @if($bundle->products->contains('is_preorder', true))
+                                <span class="top-2 right-2 absolute bg-orange-500 shadow-sm px-2 py-0.5 rounded-full font-bold text-[10px] text-white sm:text-xs tracking-wider">
+                                    PRE-ORDER
+                                </span>
+                            @endif
                         </div>
                         <div class="flex flex-col p-2 lg:p-4 h-40">
                             <h4 class="overflow-ellipsis font-semibold text-lg line-clamp-2">{{ $bundle->name }}</h4>
@@ -88,9 +93,14 @@
                 @forelse ($products as $product)
                     <a href="{{ route('marketplace.show', $product->id) }}"
                         class="bg-white hover:shadow-sm rounded-xl w-full overflow-hidden transition-all hover:-translate-y-1">
-                        <div class="bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
+                        <div class="relative bg-zinc-50 rounded-xl w-full aspect-square overflow-hidden">
                             <img src="{{ Str::startsWith($product->image_path, 'http') ? $product->image_path : Storage::url($product->image_path) }}"
                                 alt="{{ $product->name }}" class="w-full h-full object-cover">
+                            @if($product->is_preorder)
+                                <span class="top-2 right-2 absolute bg-orange-500 shadow-sm px-2 py-0.5 rounded-full font-bold text-[10px] text-white sm:text-xs tracking-wider">
+                                    PRE-ORDER
+                                </span>
+                            @endif
                         </div>
                         <div class="flex flex-col p-2 lg:p-4 h-40">
                             <h4 class="overflow-ellipsis font-semibold text-lg line-clamp-2">{{ $product->name }}</h4>

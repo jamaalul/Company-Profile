@@ -26,13 +26,18 @@
         <div class="flex flex-col gap-8 w-full max-w-5xl">
             <div class="flex md:flex-row flex-col gap-8 rounded-2xl w-full">
                 {{-- Image --}}
-                <div class="bg-white rounded-xl md:w-1/2 aspect-square overflow-hidden shrink-0">
+                <div class="relative bg-white rounded-xl md:w-1/2 aspect-square overflow-hidden shrink-0">
                     @if($bundle->image_path)
                         <img src="{{ Str::startsWith($bundle->image_path, 'http') ? $bundle->image_path : Storage::url($bundle->image_path) }}"
                             alt="{{ $bundle->name }}" class="w-full h-full object-cover">
                     @else
                         <img src="/placeholder.svg?height=500&width=500" alt="{{ $bundle->name }}"
                             class="w-full h-full object-cover">
+                    @endif
+                    @if($bundle->products->contains('is_preorder', true))
+                        <span class="top-4 right-4 absolute bg-orange-500 shadow-sm px-3 py-1 rounded-full font-bold text-xs text-white sm:text-sm tracking-wider">
+                            PRE-ORDER
+                        </span>
                     @endif
                 </div>
 
