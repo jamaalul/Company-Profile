@@ -5,27 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'HIMTI - Teknik Informatika')</title>
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
-    <link href="{{ asset('css/common.css') }}" rel="stylesheet">
-    {{--
-    <link rel="stylesheet" href="{{ asset('css/animations.css') }}"> --}}
-    <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
+<body class="overflow-x-hidden font-sans">
     @yield('content')
 </body>
-<script src="{{ asset('js/main.js') }}"></script>
-<script src="{{ asset('js/portal.js') }}"></script>
-<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script src="{{ asset('js/compro.js') }}"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    AOS.init();
-</script>
 
 </html>
