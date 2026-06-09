@@ -166,9 +166,9 @@ class OrderResource extends Resource
                     ->action(function (Order $record) {
                         $record->update(['status' => OrderStatus::Rejected]);
                         foreach ($record->items as $item) {
-                            if ($item->orderable_type === 'product' && $item->product) {
+                            if ($item->orderable_type === 'product' && $item->product && $item->product->is_preorder == 0) {
                                 $item->product->increment('stock', $item->quantity);
-                            } elseif ($item->orderable_type === 'bundle' && $item->bundle) {
+                            } elseif ($item->orderable_type === 'bundle' && $item->bundle && $item->bundle->is_preorder == 0) {
                                 foreach ($item->bundle->items as $bundleItem) {
                                     $bundleItem->product->increment('stock', $bundleItem->quantity * $item->quantity);
                                 }

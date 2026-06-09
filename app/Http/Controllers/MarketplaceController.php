@@ -37,7 +37,7 @@ class MarketplaceController extends Controller
 
     public function show(Product $product)
     {
-        if (!$product->is_active || $product->stock <= 0) {
+        if (!$product->is_active || ($product->stock <= 0 && $product->is_preorder == 0)) {
             abort(404);
         }
         return view('marketplace.show', compact('product'));
@@ -45,7 +45,7 @@ class MarketplaceController extends Controller
 
     public function purchaseForm(Product $product)
     {
-        if (!$product->is_active || $product->stock <= 0) {
+        if (!$product->is_active || ($product->stock <= 0 && $product->is_preorder == 0)) {
             abort(404);
         }
         $product->load('fields');
@@ -58,7 +58,7 @@ class MarketplaceController extends Controller
         $validated['quantity'] = 1;
         $product = Product::findOrFail($validated['product_id']);
 
-        if (!$product->is_active || $product->stock < $validated['quantity']) {
+        if (!$product->is_active || ($product->stock < $validated['quantity'] && $product->is_preorder == 0)) {
             return back()->withInput()->with('error', 'Produk tidak tersedia atau stok tidak cukup.');
         }
 
@@ -99,7 +99,9 @@ class MarketplaceController extends Controller
                 'unit_price' => $product->price,
             ]);
 
-            $product->decrement('stock', $validated['quantity']);
+            if ($product->is_preorder == 0) {
+                $product->decrement('stock', $validated['quantity']);
+            }
 
             foreach ($product->fields as $field) {
                 $fieldName = 'field_' . $field->id;
