@@ -5,7 +5,8 @@
 @section('meta')
     <meta property="og:title" content="{{ $news->title }}" />
     <meta property="og:description" content="{{ $news->excerpt ?? Str::limit(strip_tags($news->content), 150) }}" />
-    <meta property="og:image" content="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : url(Storage::url($news->featured_image)) }}" />
+    <meta property="og:image"
+        content="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : url(Storage::url($news->featured_image)) }}" />
     <meta property="og:url" content="{{ route('news.show', $news->slug) }}" />
     <meta property="og:type" content="article" />
 @endsection
@@ -45,7 +46,7 @@
     {{-- CONTENT SECTION --}}
     <section class="flex flex-col items-center bg-white px-6 sm:px-10 lg:px-16 w-screen">
         <div class="mb-6 lg:mb-16 w-full max-w-5xl">
-            <div class="max-w-none text-justify prose lg:prose-lg content">
+            <div class="max-w-none prose lg:prose-lg content">
                 {!! $news->content !!}
             </div>
         </div>
