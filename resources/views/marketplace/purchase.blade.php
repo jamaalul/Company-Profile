@@ -208,18 +208,18 @@
                         {{-- QRIS block --}}
                         <div
                             class="flex md:flex-row flex-col items-center md:items-start gap-6 md:gap-8 py-6 border-gray-200 border-y border-dashed">
-                            <div class="bg-white border border-gray-200 h-auto shrink-0">
-                                <img src="{{ asset('assets/qris.png') }}" alt="QRIS Himti"
+                            <div class="bg-white border border-gray-200 rounded-2xl h-auto overflow-hidden shrink-0">
+                                <img src="{{ asset('assets/qris.webp') }}" alt="QRIS Himti"
                                     class="w-64 object-center object-contain">
                             </div>
                             <div class="flex-1 w-full md:text-left text-center">
                                 <h4 class="mb-4 font-bold text-gray-900 text-sm md:text-base uppercase tracking-widest">
-                                    Ekraf Himti</h4>
+                                    EKRAF HIMTI, DIGITAL & KREATIF</h4>
                                 <div class="space-y-3 mb-6">
                                     <div class="flex justify-center md:justify-start text-sm">
                                         <span
                                             class="mt-0.5 w-20 font-medium text-gray-500 text-xs uppercase tracking-widest">NMID</span>
-                                        <span class="font-bold text-gray-900">ID1025409869357</span>
+                                        <span class="font-bold text-gray-900">ID1025435318007</span>
                                     </div>
                                     <div class="flex justify-center md:justify-start text-sm">
                                         <span
@@ -228,12 +228,16 @@
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-3">
-                                    <div class="bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
-                                        Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload screenshot
+                                    <div
+                                        class="bg-yellow-50 p-3 border-yellow-400 border-l-4 rounded-r text-yellow-800 text-sm text-left">
+                                        Scan QR Code dengan aplikasi dompet digital atau M-Banking Anda, lalu upload
+                                        screenshot
                                         bukti pembayaran di bawah ini.
                                     </div>
-                                    <div class="bg-blue-50 p-3 border-blue-400 border-l-4 rounded-r text-blue-800 text-sm text-left">
-                                        <span class="font-semibold">Opsi Pembayaran:</span> Anda dapat membayar minimal 50% dari total tagihan sekarang, dan melunasinya nanti.
+                                    <div
+                                        class="bg-blue-50 p-3 border-blue-400 border-l-4 rounded-r text-blue-800 text-sm text-left">
+                                        <span class="font-semibold">Opsi Pembayaran:</span> Anda dapat membayar minimal 50%
+                                        dari total tagihan sekarang, dan melunasinya nanti.
                                     </div>
                                 </div>
                             </div>
@@ -308,7 +312,7 @@
                         </a>
                         <button type="submit" id="submit-btn"
                             class="flex flex-1 justify-center items-center gap-2 bg-blue-700 hover:bg-blue-500 disabled:opacity-50 px-8 py-3.5 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-semibold text-white transition-colors disabled:cursor-not-allowed">
-                            <svg id="submit-spinner" class="w-5 h-5 animate-spin hidden" xmlns="http://www.w3.org/2000/svg"
+                            <svg id="submit-spinner" class="hidden w-5 h-5 animate-spin" xmlns="http://www.w3.org/2000/svg"
                                 width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 12a9 9 0 1 1-6.219-8.56" />

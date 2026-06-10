@@ -46,7 +46,7 @@
     {{-- CONTENT SECTION --}}
     <section class="flex flex-col items-center bg-white px-6 sm:px-10 lg:px-16 w-screen">
         <div class="mb-6 lg:mb-16 w-full max-w-5xl">
-            <div class="max-w-none prose lg:prose-lg content">
+            <div class="max-w-none text-justify prose lg:prose-lg content">
                 {!! $news->content !!}
             </div>
         </div>
