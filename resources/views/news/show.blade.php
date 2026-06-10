@@ -2,6 +2,14 @@
 
 @section('title', $news->title)
 
+@section('meta')
+    <meta property="og:title" content="{{ $news->title }}" />
+    <meta property="og:description" content="{{ $news->excerpt ?? Str::limit(strip_tags($news->content), 150) }}" />
+    <meta property="og:image" content="{{ Str::startsWith($news->featured_image, 'http') ? $news->featured_image : url(Storage::url($news->featured_image)) }}" />
+    <meta property="og:url" content="{{ route('news.show', $news->slug) }}" />
+    <meta property="og:type" content="article" />
+@endsection
+
 @section('navbar_always_black')@endsection
 
 @section('content')
