@@ -224,7 +224,6 @@ class OrderResource extends Resource
             ])
             ->bulkActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->exporter(\App\Filament\Exports\OrderExporter::class)
                         ->formats([\Filament\Actions\Exports\Enums\ExportFormat::Csv]),
